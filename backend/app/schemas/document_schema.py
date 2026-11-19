@@ -28,6 +28,7 @@ class Summary(BaseModel):
     total_claims: int = 0
     total_citations: int = 0
     references_matched: int = 0
+    references_cited: int = 0
     papers_retrieved: int = 0
     supported: int = 0
     partially_supported: int = 0

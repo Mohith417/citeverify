@@ -176,8 +176,8 @@ export function Dashboard() {
                 <span className="text-sm text-slate">claims verified against their cited sources</span>
               </div>
               <span className="text-[11.5px] text-slate">
-                {summary.needs_human_review} to review · {summary.references_matched}/{references.length} sources
-                matched · {summary.total_citations} citations
+                {summary.needs_human_review} to review · {summary.references_matched} of{" "}
+                {summary.references_cited || 0} cited sources matched · {summary.total_citations} citations
               </span>
             </div>
 

@@ -1,31 +1,68 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUpRight, FileUp, Quote, ScanSearch, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  FileUp,
+  Quote,
+  ScanSearch,
+  ShieldCheck,
+} from "lucide-react";
 import { Button, VerdictBadge } from "@/components/ui";
-import { VERDICT_META, VERDICT_ORDER } from "@/lib/utils";
+import { VERDICT_META, VERDICT_ORDER, cn } from "@/lib/utils";
+import type { Verdict } from "@/lib/types";
 
 const STEPS = [
   {
     icon: FileUp,
     n: "01",
     title: "Drop a paper",
-    line: "Claims, citation markers and the bibliography are pulled out, page by page.",
+    line: "Every page is read, and the claims with their citation markers and bibliography are pulled out.",
     tone: "#DCD3E3",
   },
   {
     icon: ScanSearch,
     n: "02",
     title: "We trace the source",
-    line: "Each reference is matched to the real publication and its open-access text.",
+    line: "Each reference is matched against Crossref, OpenAlex, Europe PMC and arXiv — only the real paper is accepted.",
     tone: "#F0DCD0",
   },
   {
     icon: ShieldCheck,
     n: "03",
     title: "You see the evidence",
-    line: "A verdict, a confidence level and the exact passage behind it.",
+    line: "The claim is compared with the source passage and gets a verdict, a confidence level and a quote.",
     tone: "#CBD7C6",
   },
 ];
+
+const VERDICT_EXAMPLES: Record<string, { claim: string; reason: string }> = {
+  supported: {
+    claim: "“BERT obtains state-of-the-art results on eleven NLP tasks.”",
+    reason: "The cited paper states the same result; the passage is quoted next to the verdict.",
+  },
+  partially_supported: {
+    claim: "“A randomized trial found test scores improved by 30%.”",
+    reason: "The source reports an improvement, but not that number — the direction holds, the size does not.",
+  },
+  unsupported: {
+    claim: "“The method works on handwritten text without retraining.”",
+    reason: "The source was read and never establishes this; the claim may still be true elsewhere.",
+  },
+  contradictory: {
+    claim: "“Attention heads are only useful in the final layer.”",
+    reason: "The paper reports the opposite finding — the strongest kind of flag, still open to review.",
+  },
+  potentially_outdated: {
+    claim: "“This remains the largest public benchmark for the task.”",
+    reason: "The source was current when written; newer work now reports larger results.",
+  },
+  insufficient_evidence: {
+    claim: "“Users prefer personalised recourse plans.”",
+    reason: "No citation, or no accessible open text — so nothing is asserted in either direction.",
+  },
+};
 
 const STATS = [
   { value: "8", label: "research APIs" },
@@ -34,6 +71,16 @@ const STATS = [
 ];
 
 export function Landing() {
+  const [stage, setStage] = useState(0);
+  const [verdict, setVerdict] = useState<Verdict>("partially_supported");
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setStage((s) => (s + 1) % STEPS.length), 7000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const example = VERDICT_EXAMPLES[verdict] ?? VERDICT_EXAMPLES.partially_supported;
+
   return (
     <div>
       {/* HERO */}
@@ -146,43 +193,151 @@ export function Landing() {
         </div>
       </section>
 
-      {/* STEPS */}
+      {/* STEPS — click or hover a stage to see it happen */}
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
           <h2 className="display text-2xl sm:text-3xl">How a check runs</h2>
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate">
-            Three steps · nothing invented
+            Pick a step · watch it happen
           </span>
         </div>
 
-        <div className="border-y-2 border-ink">
-          {STEPS.map(({ icon: Icon, ...step }) => (
-            <Link
-              key={step.n}
-              to="/method"
-              className="row-fill group flex flex-col gap-2 px-3 py-6 sm:flex-row sm:items-center sm:gap-7 sm:px-5"
-              style={{ "--row-fill": step.tone } as React.CSSProperties}
-            >
-              <span className="flex items-center gap-3">
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-ink bg-white transition-transform duration-300 ease-smooth group-hover:-rotate-6 group-hover:scale-105"
-                  style={{ backgroundColor: step.tone }}
+        <div className="grid gap-5 border-t-2 border-ink pt-5 lg:grid-cols-[1fr_1fr] lg:gap-8">
+          <div className="divide-y-2 divide-ink/10 border-y-2 border-ink">
+            {STEPS.map(({ icon: Icon, ...step }, index) => {
+              const active = stage === index;
+              return (
+                <button
+                  key={step.n}
+                  type="button"
+                  onMouseEnter={() => setStage(index)}
+                  onFocus={() => setStage(index)}
+                  onClick={() => setStage(index)}
+                  aria-pressed={active}
+                  className={cn(
+                    "group flex w-full items-start gap-4 px-3 py-5 text-left transition-colors duration-200 sm:px-4",
+                    active ? "bg-white" : "hover:bg-white/60",
+                  )}
                 >
-                  <Icon className="h-4 w-4" />
-                </span>
-                <span className="font-mono text-[11px] tracking-[0.18em] text-slate transition-colors duration-300 group-hover:text-ink">
-                  {step.n}
-                </span>
-              </span>
-              <h3 className="display text-2xl transition-transform duration-500 ease-smooth group-hover:translate-x-1.5 sm:w-[46%] sm:text-[30px]">
-                {step.title}
-              </h3>
-              <p className="text-[13px] leading-relaxed text-ink/65 sm:flex-1">{step.line}</p>
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-ink bg-white transition-all duration-300 ease-smooth group-hover:-rotate-45 group-hover:border-ink group-hover:bg-ink group-hover:text-paper">
-                <ArrowUpRight className="h-4 w-4" />
-              </span>
-            </Link>
-          ))}
+                  <span
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center border-2 border-ink transition-all duration-300 ease-smooth",
+                      active ? "-rotate-6 scale-105" : "group-hover:-rotate-3",
+                    )}
+                    style={{ backgroundColor: step.tone }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-baseline gap-3">
+                      <span className="font-mono text-[10px] tracking-[0.18em] text-slate">{step.n}</span>
+                      <span className="display text-xl leading-tight sm:text-2xl">{step.title}</span>
+                    </span>
+                    <span
+                      className={cn(
+                        "mt-1 block text-[12.5px] leading-relaxed text-ink/60 transition-all duration-300",
+                        active ? "opacity-100" : "opacity-0 sm:opacity-60",
+                      )}
+                    >
+                      {step.line}
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    className={cn(
+                      "mt-2 h-4 w-4 shrink-0 transition-all duration-300",
+                      active ? "rotate-45 text-violet" : "text-slate",
+                    )}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative min-h-[280px] overflow-hidden border-2 border-ink bg-white p-5">
+            <div
+              className="pointer-events-none absolute inset-0 stripes opacity-[0.35]"
+              aria-hidden
+            />
+            <div key={stage} className="relative animate-rise space-y-4">
+              {stage === 0 ? (
+                <>
+                  <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-slate">
+                    <span>reading · page 3 of 15</span>
+                    <span className="border border-ink/20 px-1.5 py-0.5">PDF</span>
+                  </div>
+                  <p className="text-[13px] font-semibold">attention_is_all_you_need.pdf</p>
+                  <div className="h-2 w-full border border-ink bg-paper">
+                    <div className="h-full w-1/3 bg-violet transition-all duration-700" />
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {["claim · p.1", "marker [3]", "marker [12]", "bibliography"].map((chip) => (
+                      <span
+                        key={chip}
+                        className="border border-ink/20 bg-paper px-2 py-1 font-mono text-[9.5px] uppercase tracking-[0.1em] text-ink/70"
+                      >
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="pt-1 text-[12px] leading-relaxed text-slate">
+                    16 claims and 40 references found — nothing is invented, only read.
+                  </p>
+                </>
+              ) : null}
+
+              {stage === 1 ? (
+                <>
+                  <div className="border border-ink/15 bg-paper p-3">
+                    <p className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-slate">
+                      reference [12]
+                    </p>
+                    <p className="mt-1 text-[12px] leading-snug text-ink/70">
+                      Vaswani et al. Attention is all you need. NeurIPS, 2017.
+                    </p>
+                  </div>
+                  <div className="flex justify-center text-slate">
+                    <ArrowRight className="h-4 w-4 rotate-90" />
+                  </div>
+                  <div className="border-2 border-ink bg-white p-3 shadow-block-sm">
+                    <p className="flex items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.12em] text-emerald-800">
+                      <Check className="h-3.5 w-3.5" /> matched · arXiv + Crossref
+                    </p>
+                    <p className="mt-1.5 text-[13px] font-semibold leading-snug">
+                      Attention Is All You Need
+                    </p>
+                    <p className="mt-1 font-mono text-[10px] text-slate">2017 · open-access full text</p>
+                  </div>
+                  <p className="text-[12px] leading-relaxed text-slate">
+                    Six providers are queried; a title that does not match is never accepted.
+                  </p>
+                </>
+              ) : null}
+
+              {stage === 2 ? (
+                <>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-[13px] font-semibold leading-snug">
+                      “Attention lets the model weigh every other token when encoding a word.”
+                    </p>
+                    <VerdictBadge verdict="supported" size="sm" />
+                  </div>
+                  <div className="border-l-2 border-violet bg-lavender-soft p-3">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-violet">
+                      source · §3.2
+                    </p>
+                    <p className="mt-1 flex gap-2 text-[12px] leading-relaxed text-ink/75">
+                      <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-coral" />
+                      “Attention allows the model to jointly attend to information from different
+                      representation subspaces…”
+                    </p>
+                  </div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
+                    confidence · high · still open to human review
+                  </p>
+                </>
+              ) : null}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -195,24 +350,73 @@ export function Landing() {
           </p>
         </div>
 
-        <div className="grid gap-[2px] border-2 border-ink bg-ink sm:grid-cols-2 lg:grid-cols-3">
-          {VERDICT_ORDER.map((verdict, index) => {
-            const meta = VERDICT_META[verdict];
+        <div className="grid grid-cols-2 gap-[2px] border-2 border-ink bg-ink lg:grid-cols-3">
+          {VERDICT_ORDER.map((item, index) => {
+            const meta = VERDICT_META[item];
+            const active = verdict === item;
             return (
-              <div
-                key={verdict}
-                className="group relative bg-paper p-5 transition-colors duration-200 hover:bg-white"
+              <button
+                key={item}
+                type="button"
+                onClick={() => setVerdict(item)}
+                onMouseEnter={() => setVerdict(item)}
+                aria-pressed={active}
+                className={cn(
+                  "group relative p-4 text-left transition-colors duration-200 sm:p-5",
+                  active ? "bg-white" : "bg-paper hover:bg-white/70",
+                )}
               >
-                <span className="absolute right-4 top-4 font-mono text-[10px] text-ink/25 transition-all duration-300 ease-smooth group-hover:-translate-y-0.5 group-hover:text-violet/60">
+                <span
+                  className={cn(
+                    "absolute right-4 top-4 font-mono text-[10px] transition-all duration-300 ease-smooth",
+                    active ? "text-violet" : "text-ink/25 group-hover:-translate-y-0.5 group-hover:text-violet/60",
+                  )}
+                >
                   0{index + 1}
                 </span>
-                <VerdictBadge verdict={verdict} />
-                <p className="mt-3 max-w-[26ch] text-[12px] leading-relaxed text-ink/60 transition-colors duration-200 group-hover:text-ink/80">
+                <VerdictBadge verdict={item} />
+                <p className="mt-3 max-w-[26ch] text-[11.5px] leading-relaxed text-ink/60 transition-colors duration-200 group-hover:text-ink/80">
                   {meta.description}
                 </p>
-              </div>
+                <span
+                  className={cn(
+                    "absolute inset-x-0 bottom-0 h-1 origin-left bg-violet transition-transform duration-300 ease-smooth",
+                    active ? "scale-x-100" : "scale-x-0",
+                  )}
+                />
+              </button>
             );
           })}
+        </div>
+
+        <div
+          key={verdict}
+          className="mt-3 grid animate-rise gap-4 border-2 border-ink bg-white p-5 md:grid-cols-[1.15fr_0.85fr] md:gap-8"
+        >
+          <div>
+            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-slate">
+              example claim
+            </p>
+            <p className="mt-2 text-[14px] font-semibold leading-snug">{example.claim}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <VerdictBadge verdict={verdict} size="sm" />
+              <span className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">
+                verdict
+              </span>
+            </div>
+          </div>
+          <div className="border-t-2 border-line pt-3 md:border-l-2 md:border-t-0 md:pl-6 md:pt-0">
+            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-slate">
+              why it lands here
+            </p>
+            <p className="mt-2 text-[12.5px] leading-relaxed text-ink/70">{example.reason}</p>
+            <Link
+              to="/method"
+              className="link-line mt-3 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink"
+            >
+              Method notes <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </section>
 

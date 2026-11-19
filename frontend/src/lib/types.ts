@@ -42,6 +42,7 @@ export interface Summary {
   total_claims: number;
   total_citations: number;
   references_matched: number;
+  references_cited: number;
   papers_retrieved: number;
   supported: number;
   partially_supported: number;

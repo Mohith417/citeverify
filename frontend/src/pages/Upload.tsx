@@ -78,18 +78,46 @@ export function Upload() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-      <PageHeading
-        eyebrow="Upload"
-        title="Verify a document"
-        description="One text-based PDF. We extract the claims, find the cited papers and compare them."
-        actions={
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-ink pb-6">
+        <div className="max-w-xl">
+          <div className="flex items-center gap-3">
+            <span className="h-3 w-3 bg-coral ring-2 ring-ink" />
+            <span className="label-mono text-ink/70">New verification</span>
+          </div>
+          <h1 className="display mt-4 text-[34px] leading-[0.95] sm:text-[42px]">
+            Verify a document
+          </h1>
+          <p className="mt-3 max-w-lg text-[13.5px] leading-relaxed text-ink/65">
+            One text-based PDF. Every page is read, every claim is pulled out with its citation, and
+            each cited paper is matched to the real publication before anything is judged.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link to="/method">
+            <Button variant="ghost" size="sm">
+              Method
+            </Button>
+          </Link>
           <Link to="/library">
             <Button variant="outline" size="sm">
               <History className="h-3.5 w-3.5" /> History
             </Button>
           </Link>
-        }
-      />
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-[2px] border-2 border-ink bg-ink sm:grid-cols-3">
+        {[
+          { k: "Bibliographic APIs", v: "Crossref · OpenAlex · Europe PMC · S2" },
+          { k: "Open-access text", v: "arXiv · Unpaywall · PMC · CORE" },
+          { k: "Never invented", v: "Quoted passages · human review" },
+        ].map((item) => (
+          <div key={item.k} className="group bg-paper px-3 py-2.5 transition-colors hover:bg-white">
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-violet">{item.k}</p>
+            <p className="mt-1 text-[11.5px] leading-snug text-ink/65">{item.v}</p>
+          </div>
+        ))}
+      </div>
 
       <div
         role="button"

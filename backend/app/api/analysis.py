@@ -136,7 +136,16 @@ def _run_pipeline(document_id: str) -> None:
 
         _status(db, doc, "retrieving_evidence", "Retrieving open-access full text...")
         fulltext_cache: dict[str, dict] = {}
-        to_verify = claim_objs[: settings.max_verify_claims]
+        # Verify the claims that actually carry a citation first; a claim with no
+        # source can only ever be "insufficient evidence", so spending the
+        # comparison budget on it would leave real citations unchecked.
+        ordered = sorted(
+            claim_objs,
+            key=lambda c: 0 if (c.citation_markers and any(
+                link.match_status == "matched" for link in c.reference_links
+            )) else 1,
+        )
+        to_verify = ordered[: settings.max_verify_claims]
         total = max(1, len(to_verify))
 
         for index, claim in enumerate(to_verify, start=1):
@@ -266,7 +275,7 @@ def _run_pipeline(document_id: str) -> None:
                 time.sleep(1.0)
 
         # Claims beyond the configured verification limit stay explicitly unverified.
-        for claim in claim_objs[settings.max_verify_claims:]:
+        for claim in ordered[settings.max_verify_claims:]:
             db.add(Verification(
                 claim_id=claim.id, verdict="insufficient_evidence",
                 explanation="This claim was extracted but not compared in this run (verification limit reached).",
@@ -333,6 +342,13 @@ def _build_summary(db: Session, doc: Document) -> Summary:
     summary.total_claims = len(claims)
     summary.total_citations = sum(len(c.citation_markers or []) for c in claims)
     summary.references_matched = sum(1 for r in refs if r.matching_status == "matched")
+    cited_ids = {
+        link.reference_id
+        for claim in claims
+        for link in claim.reference_links
+        if link.match_status == "matched" and link.reference_id
+    }
+    summary.references_cited = len(cited_ids)
     summary.papers_retrieved = sum(1 for r in refs if r.fulltext_availability == "full_text")
     for claim in claims:
         v = claim.verification
