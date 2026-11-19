@@ -92,19 +92,19 @@ export function Layout() {
       </div>
 
       <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+                  <div className="mx-auto flex h-[68px] w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo />
-          <nav className="hidden items-center gap-7 md:flex">
+          <nav className="hidden items-center gap-8 md:flex">
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "font-mono text-[13px] uppercase tracking-[0.12em] transition-colors duration-200",
+                    "font-mono text-[15px] uppercase tracking-[0.1em] transition-colors duration-200",
                     isActive || location.pathname.startsWith(item.to)
                       ? "link-line font-semibold text-ink after:scale-x-100"
-                      : "link-line text-ink/65 hover:text-ink",
+                      : "link-line text-ink/70 hover:text-ink",
                   )
                 }
               >
