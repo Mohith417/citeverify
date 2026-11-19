@@ -1,6 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import type { Health } from "@/lib/types";
+
+const PROVIDER_NAMES: Record<string, string> = {
+  semantic_scholar: "Semantic Scholar",
+  europe_pmc: "Europe PMC",
+  arxiv: "arXiv",
+  unpaywall: "Unpaywall",
+  openalex: "OpenAlex",
+  crossref: "Crossref",
+  core: "CORE",
+  ncbi: "NCBI",
+  grobid: "GROBID",
+};
+
+function providerName(key: string) {
+  return PROVIDER_NAMES[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
+}
 
 export function Logo({ light = false, size = 36 }: { light?: boolean; size?: number }) {
   return (
@@ -112,10 +130,7 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
-          <span className="hidden shrink-0 items-center gap-2 border-2 border-ink/15 px-2.5 py-1 font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] text-ink/55 lg:inline-flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint ring-1 ring-ink/40" />
-            Drag a PDF anywhere
-          </span>
+          <SourceStatus />
         </div>
       </header>
 
@@ -150,6 +165,118 @@ export function Layout() {
           Automated verdicts stay open to human review
         </div>
       </footer>
+    </div>
+  );
+}
+
+function SourceStatus() {
+  const [health, setHealth] = useState<Health | null>(null);
+  const [open, setOpen] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const wrap = useRef<HTMLDivElement>(null);
+
+  async function load() {
+    setChecking(true);
+    try {
+      setHealth(await api.health());
+    } catch {
+      setHealth(null);
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(event: MouseEvent) {
+      if (wrap.current && !wrap.current.contains(event.target as Node)) setOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const providers = Object.entries(health?.providers ?? {});
+  const online = providers.filter(([, up]) => up).length;
+  const allUp = providers.length > 0 && online === providers.length && health?.ai_configured;
+  const dot = checking
+    ? "bg-ink/30"
+    : allUp
+      ? "bg-emerald-600"
+      : providers.length
+        ? "bg-amber"
+        : "bg-danger";
+
+  return (
+    <div ref={wrap} className="relative hidden lg:block">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-label="Research source status"
+        className="flex shrink-0 items-center gap-2 border-2 border-ink/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/65 transition-colors hover:border-ink/40 hover:text-ink"
+      >
+        <span className={cn("h-2 w-2 rounded-full ring-1 ring-ink/30", dot)} />
+        {checking ? "Checking sources" : `${online}/${providers.length} sources live`}
+      </button>
+
+      {open ? (
+        <div className="absolute right-0 top-full z-50 mt-2 w-[268px] border-2 border-ink bg-white p-3 shadow-block-sm">
+          <div className="flex items-center justify-between border-b-2 border-line pb-2">
+            <p className="label-mono">Sources</p>
+            <button
+              type="button"
+              onClick={() => void load()}
+              className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-violet hover:text-ink"
+            >
+              {checking ? "checking…" : "re-check"}
+            </button>
+          </div>
+          <ul className="mt-2 space-y-1.5">
+            {providers.length === 0 ? (
+              <li className="text-[12px] text-ink/60">Backend unreachable.</li>
+            ) : (
+              providers.map(([key, up]) => (
+                <li key={key} className="flex items-center justify-between gap-2 text-[12px]">
+                  <span className="font-medium text-ink/80">{providerName(key)}</span>
+                  <span
+                    className={cn(
+                      "font-mono text-[10px] font-semibold uppercase tracking-[0.06em]",
+                      up ? "text-emerald-700" : "text-danger",
+                    )}
+                  >
+                    {up ? "live" : "down"}
+                  </span>
+                </li>
+              ))
+            )}
+          </ul>
+          <div className="mt-2.5 flex items-center justify-between gap-2 border-t-2 border-line pt-2 text-[11.5px]">
+            <span className="font-medium text-ink/60">AI verifier</span>
+            <span
+              className={cn(
+                "font-mono text-[10px] font-semibold uppercase tracking-[0.06em]",
+                health?.ai_configured ? "text-emerald-700" : "text-danger",
+              )}
+            >
+              {health?.ai_configured ? health.ai_provider : "not configured"}
+            </span>
+          </div>
+          <p className="mt-2 text-[11px] leading-snug text-ink/50">
+            Free APIs only. A run still proceeds if one source is unavailable.
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }
