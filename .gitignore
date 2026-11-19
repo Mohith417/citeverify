@@ -12,3 +12,6 @@ backend/storage/cache/*
 node_modules/
 dist/
 .vscode/
+uvicorn.log
+backend/storage/demo_document.pdf
+backend/storage/reports/

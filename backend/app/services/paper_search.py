@@ -181,16 +181,29 @@ def title_sim(a: str | None, b: str | None) -> float:
     return max(fuzz.ratio(na, nb), fuzz.token_sort_ratio(na, nb)) / 100
 
 
+def _clean_name(name: str) -> str:
+    # drop accents / replacement characters so encoded PDF text still matches
+    return re.sub(r"[^a-z]", "", name.lower())
+
+
 def _last(name: str) -> str:
     t = name.replace(",", " ").split()
-    return t[-1].lower() if t else ""
+    return _clean_name(t[-1]) if t else ""
 
 
 def author_ok(ref: dict, c: Candidate) -> bool | None:
     if not ref.get("authors") or not c.authors:
         return None
-    rs = surname(ref["authors"][0]).split()[-1]
-    return rs in {_last(a) for a in c.authors}
+    rs = _clean_name(surname(ref["authors"][0]).split()[-1])
+    if not rs:
+        return None
+    for author in c.authors:
+        last = _last(author)
+        if not last:
+            continue
+        if rs == last or fuzz.ratio(rs, last) >= 85 or last.startswith(rs[:4]) or rs.startswith(last[:4]):
+            return True
+    return False
 
 
 def score(ref: dict, c: Candidate) -> float:
