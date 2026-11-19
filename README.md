@@ -126,14 +126,38 @@ See `docs/API_CONTRACT.md` for schemas and rules.
 
 ---
 
+## Repository hygiene
+
+Runtime artefacts never enter version control: uploads, caches, generated reports, the SQLite
+file, logs, screenshots and local provider backups are git-ignored, while `storage/.gitkeep` keeps
+the required folders present. Secrets live only in `backend/.env` (untracked); `backend/.env.example`
+documents every variable with empty values.
+
 ## Tests
 
 ```bash
-cd backend && pytest -q        # 27+ tests: parsing, discovery, upload, endpoints, quote guard, SSRF
+cd backend && pytest -q        # 32 tests: parsing, discovery, upload, endpoints, quote guard, SSRF
 cd frontend && npm run build   # type-check + production build
 ```
 
 ## Project layout
+
+```
+backend/
+  app/          FastAPI application (api, services, models, schemas, config)
+  tests/        pytest suite
+  storage/      runtime uploads, cache and generated reports (git-ignored)
+frontend/
+  src/          React application
+    pages/      landing, upload, analysis, dashboard, claim detail, references, report, library, method
+    components/ layout + UI primitives
+    lib/        api client, types, formatting
+  public/       static assets (logo)
+docs/           API contract
+docker-compose.yml   optional GROBID service
+```
+
+Inside `backend/app/`:
 
 ```
 backend/app/
@@ -144,10 +168,6 @@ backend/app/
                 misleading_reference_detector, grobid_service, report_generator
   models/       documents, claims, references, evidence, verifications, review events
   schemas/      Pydantic contracts
-frontend/src/
-  pages/        landing, upload, analysis, dashboard, claim detail, references, report, library, method
-  components/   layout + UI primitives
-  lib/          api client, types, formatting
 ```
 
 ## Limitations (honest list)

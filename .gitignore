@@ -19,3 +19,10 @@ frontend/screenshot-*.png
 backend/storage/last_doc_id
 backend/storage/res.json
 vite.log
+
+# local development noise
+*.log
+*.backup
+.freebuff/
+.cloud-attachments/
+frontend/preview-*.png
