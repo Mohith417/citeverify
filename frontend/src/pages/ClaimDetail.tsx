@@ -145,7 +145,7 @@ export function ClaimDetail() {
           </Card>
 
           <Card className="overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ink/10 px-5 py-3">
               <SectionLabel>Automated verdict</SectionLabel>
               <span className="text-[11px] text-slate">
                 {BASIS_LABEL[verification?.evidence_basis ?? "none"] ?? verification?.evidence_basis} ·{" "}
@@ -167,7 +167,7 @@ export function ClaimDetail() {
                   ) : null}
 
                   {verification.key_supporting_facts.length || verification.limitations.length ? (
-                    <details className="mt-4 rounded-lg bg-paper/70 p-3">
+                    <details className="mt-4 border-2 border-ink/10 bg-paper/70 p-3">
                       <summary className="cursor-pointer text-[11.5px] font-medium text-slate">
                         Supporting facts and limitations
                       </summary>
@@ -203,7 +203,7 @@ export function ClaimDetail() {
                   ) : null}
 
                   {verification.needs_human_review ? (
-                    <div className="mt-3 flex flex-wrap items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-[11.5px] text-amber-800 ring-1 ring-amber-200">
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5 border-2 border-amber-300 bg-amber-50 px-3 py-2 text-[11.5px] text-amber-800">
                       <AlertTriangle className="h-3.5 w-3.5" />
                       Needs human review
                       <span className="text-amber-700/80">
@@ -220,11 +220,11 @@ export function ClaimDetail() {
 
           <div>
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-base uppercase">Evidence from the source</h2>
+              <h2 className="display text-lg">Evidence from the source</h2>
               <span className="text-[11px] text-slate">{detail.evidence.length} passages</span>
             </div>
             {detail.evidence.length === 0 ? (
-              <div className="mt-2 flex items-start gap-2 rounded-xl border border-dashed border-line bg-white/70 p-4 text-[12.5px] text-slate">
+              <div className="mt-2 flex items-start gap-2 border-2 border-dashed border-ink/20 bg-white/70 p-4 text-[12.5px] text-slate">
                 <FileWarning className="mt-0.5 h-4 w-4 shrink-0" />
                 No passage was retrieved, so this claim is marked for review instead of claiming support or refutation.
               </div>
@@ -294,13 +294,13 @@ export function ClaimDetail() {
                     href={reference.matched_source_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 flex items-center justify-between rounded-lg bg-paper px-2.5 py-2 text-[11.5px] font-medium text-ink hover:bg-lavender-soft"
+                    className="mt-1 flex items-center justify-between border border-ink/10 bg-paper px-2.5 py-2 text-[11.5px] font-medium text-ink transition-colors hover:border-ink/40 hover:bg-lavender-soft"
                   >
                     {reference.matched_doi ? `doi:${reference.matched_doi}` : "Open source"}
                     <ArrowUpRight className="h-3.5 w-3.5 text-violet" />
                   </a>
                 ) : (
-                  <p className="mt-1 rounded-lg border border-dashed border-line px-2.5 py-2 text-[11px] text-slate">
+                  <p className="mt-1 border border-dashed border-ink/20 px-2.5 py-2 text-[11px] text-slate">
                     No public source link confirmed.
                   </p>
                 )}
@@ -329,7 +329,7 @@ export function ClaimDetail() {
               <select
                 value={override}
                 onChange={(event) => setOverride(event.target.value as Verdict | "")}
-                className="h-9 w-full rounded-lg border border-line bg-white px-2 text-xs outline-none focus:border-violet"
+                className="h-9 w-full border-2 border-ink/20 bg-white px-2 text-xs outline-none focus:border-ink"
                 aria-label="Override verdict"
               >
                 <option value="">Keep current verdict</option>
@@ -344,7 +344,7 @@ export function ClaimDetail() {
                 onChange={(event) => setNote(event.target.value)}
                 rows={2}
                 placeholder="Reviewer note (optional)"
-                className="w-full rounded-lg border border-line bg-white p-2 text-xs outline-none focus:border-violet"
+                className="w-full border-2 border-ink/20 bg-white p-2 text-xs outline-none focus:border-ink"
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => submitReview("confirmed")} disabled={saving} className="flex-1">

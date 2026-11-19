@@ -7,7 +7,7 @@
     -webkit-font-smoothing: antialiased;
   }
   body {
-    @apply bg-paper text-ink font-sans;
+    @apply bg-paper font-sans text-ink;
     margin: 0;
   }
   ::selection {
@@ -32,16 +32,37 @@
     @apply transition-all duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-block-sm;
   }
   .grid-lines {
-    background-image: linear-gradient(to right, rgba(20, 18, 43, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(20, 18, 43, 0.06) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-image: linear-gradient(to right, rgba(20, 18, 43, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(20, 18, 43, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
-  .chain-dot {
-    @apply h-2.5 w-2.5 border-2 border-ink bg-white;
+  .arrow-slide svg {
+    @apply transition-transform duration-200;
+  }
+  .arrow-slide:hover svg {
+    transform: translate(2px, -2px);
+  }
+  .sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+  }
+  .sheen:hover::after {
+    transform: translateX(120%) skewX(-18deg);
+  }
+  .hover-pause:hover {
+    animation-play-state: paused;
   }
 }
 
-/* thin scrollbars for panels */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

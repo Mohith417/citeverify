@@ -118,7 +118,7 @@ export function Dashboard() {
           <Link to="/library" className="inline-flex items-center gap-1.5 text-xs font-medium text-slate hover:text-ink">
             <ArrowLeft className="h-3.5 w-3.5" /> Review history
           </Link>
-          <h1 className="mt-2 truncate font-display text-2xl uppercase leading-tight sm:text-3xl">
+          <h1 className="display mt-2 truncate text-2xl sm:text-3xl">
             {data.document.filename}
           </h1>
           <p className="mt-1 text-xs text-slate">
@@ -144,10 +144,10 @@ export function Dashboard() {
         </div>
       </div>
 
-      {error ? <p className="mt-4 rounded-lg border border-danger/30 bg-red-50 p-3 text-sm text-danger">{error}</p> : null}
+      {error ? <p className="mt-4 border-2 border-danger bg-red-50 p-3 text-sm text-danger">{error}</p> : null}
 
       {data.document.needs_ocr ? (
-        <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+        <div className="mt-4 flex items-start gap-2 border-2 border-ink bg-amber/30 p-4 text-sm">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
           <p>This PDF appears to be scanned. Text could not be extracted, so OCR is required before verification.</p>
         </div>
@@ -175,13 +175,13 @@ export function Dashboard() {
                 <span className="font-display text-3xl">{summary.total_claims}</span>
                 <span className="text-sm text-slate">claims verified against their cited sources</span>
               </div>
-              <span className="text-xs text-slate">
-                {summary.needs_human_review} open to review ·{" "}
-                {summary.references_matched}/{references.length} references matched
+              <span className="text-[11.5px] text-slate">
+                {summary.needs_human_review} to review · {summary.references_matched}/{references.length} sources
+                matched · {summary.total_citations} citations
               </span>
             </div>
 
-            <div className="mt-4 flex h-2.5 w-full overflow-hidden rounded-full bg-line">
+            <div className="mt-4 flex h-3 w-full overflow-hidden border-2 border-ink bg-white">
               {VERDICT_ORDER.map((verdict) => {
                 const share = ((counts[verdict] ?? 0) / total) * 100;
                 return share > 0 ? (
@@ -191,14 +191,16 @@ export function Dashboard() {
             </div>
 
             <div className="mt-4 flex flex-wrap gap-1.5">
-              {VERDICT_ORDER.map((verdict) => (
+              {VERDICT_ORDER.filter((verdict) => (counts[verdict] ?? 0) > 0).map((verdict) => (
                 <button
                   key={verdict}
                   type="button"
                   onClick={() => setFilter(filter === verdict ? "all" : verdict)}
                   className={[
-                    "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11.5px] transition-colors",
-                    filter === verdict ? "bg-ink text-white" : "bg-paper text-ink/70 hover:bg-lavender-soft",
+                    "inline-flex items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold transition-all",
+                    filter === verdict
+                      ? "border-ink bg-ink text-white"
+                      : "border-ink/15 bg-white text-ink/70 hover:border-ink hover:bg-lavender-soft",
                   ].join(" ")}
                 >
                   <span className={["h-1.5 w-1.5 rounded-full", VERDICT_META[verdict].dot].join(" ")} />
@@ -208,25 +210,12 @@ export function Dashboard() {
               ))}
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-line sm:grid-cols-4">
-              {[
-                { label: "Citation markers", value: summary.total_citations },
-                { label: "Sources matched", value: summary.references_matched },
-                { label: "Full texts", value: summary.papers_retrieved },
-                { label: "Need review", value: summary.needs_human_review },
-              ].map((item) => (
-                <div key={item.label} className="bg-white px-3 py-2.5">
-                  <p className="font-display text-lg leading-none">{item.value}</p>
-                  <p className="mt-1 text-[11px] text-slate">{item.label}</p>
-                </div>
-              ))}
-            </div>
           </Card>
 
           {/* toolbar */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <h2 className="font-display text-lg uppercase">Claims</h2>
+              <h2 className="display text-xl">Claims</h2>
               <Badge>{filtered.length}</Badge>
               {filter !== "all" ? (
                 <button type="button" onClick={() => setFilter("all")} className="text-[11px] font-medium text-violet hover:underline">
@@ -239,13 +228,15 @@ export function Dashboard() {
                 type="button"
                 onClick={() => setFilter(filter === "review" ? "all" : "review")}
                 className={[
-                  "rounded-md px-2.5 py-1.5 text-[11.5px] font-medium transition-colors",
-                  filter === "review" ? "bg-ink text-white" : "bg-white text-slate ring-1 ring-line hover:text-ink",
+                  "border-2 px-3 py-1.5 text-[11px] font-semibold transition-all",
+                  filter === "review"
+                    ? "border-ink bg-ink text-white"
+                    : "border-ink/15 bg-white text-slate hover:border-ink hover:text-ink",
                 ].join(" ")}
               >
                 Needs review only
               </button>
-              <div className="flex h-9 items-center gap-2 rounded-md bg-white px-2.5 ring-1 ring-line focus-within:ring-violet">
+              <div className="flex h-9 items-center gap-2 border-2 border-ink/15 bg-white px-3 focus-within:border-ink">
                 <Search className="h-3.5 w-3.5 text-slate" />
                 <input
                   value={query}
@@ -260,7 +251,7 @@ export function Dashboard() {
           {/* claim list */}
           <div className="mt-3 space-y-2">
             {filtered.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-line bg-white/60 p-8 text-center text-sm text-slate">
+              <div className="border-2 border-dashed border-ink/30 bg-white/60 p-8 text-center text-sm text-slate">
                 No claims match this filter.
               </div>
             ) : (
@@ -270,7 +261,7 @@ export function Dashboard() {
             )}
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-lavender-soft px-4 py-3">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-2 border-ink bg-lavender-soft px-4 py-3">
             <p className="text-[12px] text-ink/70">
               Verdicts are evidence-backed indications, not final academic judgments.
             </p>
@@ -292,7 +283,7 @@ function ClaimItem({ claim, documentId, index }: { claim: ClaimRow; documentId: 
   return (
     <Link
       to={`/documents/${documentId}/claims/${claim.claim_id}`}
-      className="group flex items-start gap-3 rounded-xl border border-line bg-white p-4 transition-all hover:border-violet/40 hover:shadow-[0_6px_20px_-12px_rgba(75,54,245,0.5)]"
+      className="group flex items-start gap-3 border-2 border-ink bg-white p-4 transition-all duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-block-sm"
     >
       <span className="mt-0.5 hidden w-5 shrink-0 font-mono text-[10px] text-slate sm:block">
         {String(index).padStart(2, "0")}

@@ -54,7 +54,7 @@ export function References() {
       </Link>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl uppercase">References</h1>
+          <h1 className="display text-2xl sm:text-3xl">References</h1>
           <p className="mt-1 text-xs text-slate">
             {matched} of {references.length} entries resolved to an original publication
           </p>
@@ -89,7 +89,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
   const Icon = meta.icon;
   const title = reference.matched_title ?? reference.title ?? reference.reference_text;
   return (
-    <details className="group rounded-xl border border-line bg-white open:shadow-[0_1px_2px_rgba(20,18,43,0.04)]">
+    <details className="group border-2 border-ink bg-white transition-shadow hover:shadow-block-sm open:shadow-block-sm">
       <summary className="flex cursor-pointer list-none items-start gap-3 p-4 [&::-webkit-details-marker]:hidden">
         <span className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md bg-lavender-soft px-1 font-mono text-[10.5px]">
           {reference.ref_label || "—"}
@@ -107,7 +107,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
         <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-slate transition-transform group-open:rotate-180" />
       </summary>
 
-      <div className="space-y-4 border-t border-line p-4">
+      <div className="space-y-4 border-t-2 border-ink/10 p-4">
         <p className="break-words text-[12px] leading-relaxed text-slate">{reference.reference_text}</p>
 
         <div className="grid gap-4 sm:grid-cols-2">

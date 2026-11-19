@@ -10,10 +10,10 @@ import { PageHeading } from "@/components/Layout";
 const STATUS_LABEL: Record<string, string> = {
   uploaded: "Uploaded",
   extracting: "Extracting",
-  searching_references: "Searching sources",
-  retrieving_evidence: "Retrieving evidence",
-  comparing_claims: "Comparing claims",
-  generating_report: "Generating report",
+  searching_references: "Searching",
+  retrieving_evidence: "Evidence",
+  comparing_claims: "Comparing",
+  generating_report: "Report",
   completed: "Completed",
   failed: "Failed",
   needs_review: "Needs review",
@@ -37,7 +37,7 @@ export function Library() {
   }, []);
 
   async function remove(id: string, filename: string) {
-    if (!window.confirm(`Delete “${filename}” and its verification results? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete “${filename}” and its results? This cannot be undone.`)) return;
     setDeleting(id);
     try {
       await api.deleteDocument(id);
@@ -50,11 +50,11 @@ export function Library() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
       <PageHeading
-        eyebrow="Review history"
+        eyebrow="History"
         title="Your verifications"
-        description="Every uploaded document and its processing state. Reports stay available until you delete them."
+        description="Saved reports stay here until you delete them."
         actions={
           <Link to="/upload">
             <Button size="sm">
@@ -64,17 +64,19 @@ export function Library() {
         }
       />
 
-      {error ? <p className="mt-4 border-2 border-danger bg-red-50 p-3 text-sm text-danger">{error}</p> : null}
+      {error ? (
+        <p className="mt-4 border-2 border-danger bg-red-50 p-3 text-[12.5px] text-danger">{error}</p>
+      ) : null}
 
-      <div className="mt-8">
+      <div className="mt-6">
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-slate">
-            <Spinner /> Loading documents…
+            <Spinner /> Loading…
           </div>
         ) : documents.length === 0 ? (
           <EmptyState
-            title="No documents yet"
-            description="Upload a research paper or assignment to create your first evidence-backed verification report."
+            title="Nothing verified yet"
+            description="Upload a paper to get your first evidence-backed report."
             action={
               <Link to="/upload">
                 <Button size="sm">Upload a PDF</Button>
@@ -82,56 +84,50 @@ export function Library() {
             }
           />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
             {documents.map((doc) => {
               const done = doc.processing_status === "completed";
               return (
                 <article
                   key={doc.id}
-                  className="flex flex-col justify-between rounded-xl border border-line bg-white p-5 transition-all hover:border-violet/40 hover:shadow-[0_8px_24px_-16px_rgba(75,54,245,0.5)]"
+                  className="group flex items-center justify-between gap-3 border-2 border-ink bg-white px-4 py-3.5 transition-all duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-block-sm"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-lavender-soft">
-                        <FileText className="h-4 w-4" />
-                      </span>
-                      <div className="min-w-0">
-                        <h2 className="truncate text-sm font-semibold">{doc.filename}</h2>
-                        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-                          {formatDate(doc.uploaded_at)}
-                        </p>
-                      </div>
+                  <Link to={done ? `/documents/${doc.id}` : `/analysis/${doc.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-ink bg-lavender-soft">
+                      <FileText className="h-4 w-4 text-violet" />
+                    </span>
+                    <div className="min-w-0">
+                      <h2 className="truncate text-[13.5px] font-semibold">{doc.filename}</h2>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-slate">
+                        {formatDate(doc.uploaded_at)} · {doc.page_count} pages
+                      </p>
                     </div>
+                  </Link>
+                  <div className="flex shrink-0 items-center gap-2">
                     <span
                       className={[
-                        "shrink-0 border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em]",
-                        done ? "border-emerald-700/30 bg-mint text-emerald-800" : "border-ink/20 bg-paper text-slate",
+                        "hidden border px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.08em] sm:inline",
+                        done ? "border-emerald-700/40 bg-mint text-emerald-800" : "border-ink/20 bg-paper text-slate",
                       ].join(" ")}
                     >
                       {STATUS_LABEL[doc.processing_status] ?? doc.processing_status}
                     </span>
-                  </div>
-                  <div className="mt-5 flex items-center justify-between border-t border-line pt-3">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-                      {doc.page_count} pages · {doc.id.slice(0, 8)}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        aria-label={`Delete ${doc.filename}`}
-                        disabled={deleting === doc.id}
-                        onClick={() => remove(doc.id, doc.filename)}
-                        className="text-slate transition-colors hover:text-danger disabled:opacity-40"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                      <Link
-                        to={done ? `/documents/${doc.id}` : `/analysis/${doc.id}`}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-violet hover:underline"
-                      >
-                        {done ? "Open report" : "View progress"} <ArrowRight className="h-3 w-3" />
-                      </Link>
-                    </div>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${doc.filename}`}
+                      disabled={deleting === doc.id}
+                      onClick={() => remove(doc.id, doc.filename)}
+                      className="p-2 text-slate opacity-60 transition-all hover:bg-red-50 hover:text-danger group-hover:opacity-100 disabled:opacity-30"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                    <Link
+                      to={done ? `/documents/${doc.id}` : `/analysis/${doc.id}`}
+                      aria-label="Open"
+                      className="p-2 text-slate transition-colors hover:bg-lavender-soft hover:text-violet"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
                 </article>
               );

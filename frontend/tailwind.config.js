@@ -27,6 +27,7 @@ export default {
         block: "6px 6px 0 0 #14122B",
         "block-sm": "4px 4px 0 0 #14122B",
         "block-violet": "6px 6px 0 0 #4B36F5",
+        "block-coral": "6px 6px 0 0 #FF6B45",
         soft: "0 18px 40px -28px rgba(20,18,43,0.45)",
       },
       keyframes: {
@@ -34,13 +35,23 @@ export default {
           "0%": { opacity: "0", transform: "translateY(14px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0) rotate(var(--tw-rotate))" },
+          "50%": { transform: "translateY(-10px) rotate(var(--tw-rotate))" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
         pulseBar: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.45" },
         },
       },
       animation: {
-        rise: "rise 0.5s ease-out both",
+        rise: "rise 0.55s cubic-bezier(0.22,1,0.36,1) both",
+        float: "float 8s ease-in-out infinite",
+        marquee: "marquee 26s linear infinite",
         pulseBar: "pulseBar 1.4s ease-in-out infinite",
       },
     },
