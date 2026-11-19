@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   Check,
@@ -124,11 +125,17 @@ export function Landing() {
                     Verify a document <ArrowUpRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link to="/method">
-                  <Button size="lg" variant="outline">
-                    How it works <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() =>
+                    document
+                      .getElementById("how-it-runs")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                >
+                  How it works <ArrowDown className="h-4 w-4" />
+                </Button>
               </div>
 
             <dl className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
@@ -194,7 +201,10 @@ export function Landing() {
       </section>
 
       {/* STEPS — click or hover a stage to see it happen */}
-      <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+      <section
+        id="how-it-runs"
+        className="mx-auto w-full max-w-6xl scroll-mt-24 px-4 py-12 sm:px-6"
+      >
         <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
           <h2 className="display text-2xl sm:text-3xl">How a check runs</h2>
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate">
@@ -410,12 +420,9 @@ export function Landing() {
               why it lands here
             </p>
             <p className="mt-2 text-[12.5px] leading-relaxed text-ink/70">{example.reason}</p>
-            <Link
-              to="/method"
-              className="link-line mt-3 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink"
-            >
-              Method notes <ArrowRight className="h-3 w-3" />
-            </Link>
+            <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.12em] text-slate">
+              every verdict keeps its evidence quote
+            </p>
           </div>
         </div>
       </section>
@@ -449,7 +456,7 @@ export function Landing() {
             <div className="flex flex-col items-start gap-2 md:items-end">
               <Link to="/method" className="arrow-slide">
                 <Button size="lg" variant="coral">
-                  See what gets checked <ArrowRight className="h-4 w-4" />
+                  Read the full method <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
