@@ -15,3 +15,6 @@ dist/
 uvicorn.log
 backend/storage/demo_document.pdf
 backend/storage/reports/
+frontend/screenshot-*.png
+backend/storage/last_doc_id
+backend/storage/res.json

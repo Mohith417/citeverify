@@ -1,5 +1,163 @@
 # CiteVerify
-Checks whether cited research actually supports what the writer claims.
 
-Backend: cd backend, create venv, pip install -r requirements.txt, copy .env.example to .env, then run: uvicorn app.main:app --reload
-Branches: main <- dev <- feat/<area>-<name>
+**Scientific claim & citation verification.** Upload an academic PDF. CiteVerify extracts the
+claims that need evidence, maps in-text citations to the reference list, locates the original
+publications, retrieves legal open-access full text and checks whether that research actually
+supports each statement.
+
+A citation existing is not the same as a citation proving the claim. Every verdict ships with the
+source passage, a confidence indicator, the publication trace and a human-review flag.
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS, React Router, Axios, Lucide |
+| Backend | Python 3, FastAPI, SQLAlchemy, SQLite, Pydantic |
+| AI | Gemini (Google AI Studio) **or** any OpenAI-compatible free endpoint (Groq/Ollama) |
+| Documents | pypdf, optional GROBID (Docker), lxml |
+| Research | Crossref, OpenAlex, Europe PMC, Semantic Scholar, Unpaywall, arXiv |
+| Retrieval | section-aware paragraph splitting; sentence-transformers + FAISS when installed, deterministic lexical ranking otherwise |
+| Report | ReportLab PDF |
+
+All services used are free of charge; no paid API or paywall access is required or performed.
+
+---
+
+## Run it locally
+
+### 1. Backend
+
+```bash
+cd backend
+python -m venv .venv
+# Windows: .venv\Scripts\activate      macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env        # then fill in the AI provider + a contact email
+uvicorn app.main:app --reload --port 8000
+```
+
+Check `http://127.0.0.1:8000/api/health` — `ai_configured` must be `true` for claim comparison.
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev          # http://127.0.0.1:5173
+```
+
+Vite proxies `/api` to `http://127.0.0.1:8000`, so no CORS setup is needed for local development.
+
+### 3. GROBID (optional)
+
+```bash
+docker compose up -d grobid
+```
+
+GROBID improves scientific structure extraction. When it is unavailable the regex-based citation
+and reference parser is used instead — the pipeline never blocks on it.
+
+---
+
+## Configuration (`backend/.env`)
+
+| Variable | Purpose |
+|---|---|
+| `AI_PROVIDER` | `gemini`, `groq`, `openai_compat`, `ollama` or `auto` |
+| `AI_MODEL` / `AI_BASE_URL` / `AI_API_KEY` | OpenAI-compatible provider (e.g. Groq: `openai/gpt-oss-120b`, `https://api.groq.com/openai/v1`) |
+| `GEMINI_API_KEY` / `GEMINI_MODEL` | Google AI Studio key (starts with `AIza`) and model name |
+| `OLLAMA_URL` / `OLLAMA_MODEL` | Local model fallback |
+| `CONTACT_EMAIL` | Polite-pool identification for Crossref/OpenAlex (recommended) |
+| `UNPAYWALL_EMAIL` | Enables the Unpaywall open-access lookup |
+| `SEMANTIC_SCHOLAR_API_KEY` | Optional; raises the Semantic Scholar rate limit |
+| `OPENALEX_API_KEY` | Optional; avoids anonymous search throttling |
+| `MAX_UPLOAD_MB`, `MAX_CLAIMS`, `MAX_VERIFY_CLAIMS` | Pipeline limits |
+
+Keys stay server-side; the browser only talks to the FastAPI app.
+
+---
+
+## Pipeline
+
+1. **Upload** — PDF validated (type, size, header), text extracted page by page with pypdf, scanned
+   files detected and refused instead of pretending text was read.
+2. **Extract** — LLM returns claims verbatim; citations (`[1]`, `[2,3]`, `[1–4]`, author–year) and
+   the bibliography are parsed, and claims are linked to reference rows. Ambiguity is preserved.
+3. **Retrieve** — DOI → exact title → title + author/year matching across Crossref, OpenAlex,
+   Europe PMC, Semantic Scholar and arXiv. A similar title is never accepted silently.
+4. **Evidence** — open-access PDFs (OpenAlex/Unpaywall) and Europe PMC JATS XML are fetched behind
+   an SSRF guard; abstracts are used only when flagged `abstract_only`.
+5. **Compare** — section-aware paragraphs are ranked against the claim and the best passages go to
+   the verifier. Every returned quotation is checked against the retrieved source text.
+6. **Report** — verdict, explanation, facts, limitations, confidence, review flag, plus a
+   downloadable ReportLab PDF.
+
+### Verdicts
+
+`supported` · `partially_supported` · `unsupported` · `contradictory` ·
+`potentially_outdated` · `insufficient_evidence`
+
+“Unsupported” means the accessible evidence did not establish the statement — not that it is false.
+Every non-supported verdict is marked for human review and can be confirmed, overridden or annotated.
+
+---
+
+## API
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/health` | service + AI + provider status |
+| GET | `/api/documents` | recent documents |
+| POST | `/api/documents/upload` | multipart PDF upload |
+| POST | `/api/documents/{id}/analyze` | start background analysis (idempotent while running) |
+| GET | `/api/documents/{id}/status` | real processing stage |
+| GET | `/api/documents/{id}/results` | dashboard payload with computed summary |
+| DELETE | `/api/documents/{id}` | remove document + results |
+| GET | `/api/claims/{claim_id}` | claim, references, evidence, verification |
+| POST | `/api/claims/{claim_id}/review` | confirm / override / note |
+| GET | `/api/references/{reference_id}` | reference + matched publication |
+| POST | `/api/documents/{id}/extract-citations` | citation-only inspection (debug/tests) |
+| GET | `/api/documents/{id}/report` | generated PDF report |
+
+See `docs/API_CONTRACT.md` for schemas and rules.
+
+---
+
+## Tests
+
+```bash
+cd backend && pytest -q        # 27+ tests: parsing, discovery, upload, endpoints, quote guard, SSRF
+cd frontend && npm run build   # type-check + production build
+```
+
+## Project layout
+
+```
+backend/app/
+  api/          upload, analysis, claims, references, reports
+  services/     pdf_parser, citation_extractor, citation_pipeline, paper_search,
+                discovery_pipeline, research_provider + semantic_scholar/unpaywall/arxiv,
+                fulltext_retriever, evidence_retrieval, claim_extractor, ai_verifier, llm,
+                misleading_reference_detector, grobid_service, report_generator
+  models/       documents, claims, references, evidence, verifications, review events
+  schemas/      Pydantic contracts
+frontend/src/
+  pages/        landing, upload, analysis, dashboard, claim detail, references, report, library, method
+  components/   layout + UI primitives
+  lib/          api client, types, formatting
+```
+
+## Limitations (honest list)
+
+- Only text-based PDFs are processed; OCR is not included and is reported as required.
+- Reference parsing is heuristic; unusual citation styles may be marked incomplete or ambiguous.
+- Full-text retrieval depends on legal open access. When only an abstract is available the verdict
+  is labelled abstract-only; when nothing is available the claim is `insufficient_evidence`.
+- Free AI tiers enforce rate limits; requests are retried with backoff, but a run can still leave
+  some claims marked for review.
+- Search APIs (notably OpenAlex anonymous search) are throttled unpredictably; every provider
+  degrades gracefully and matching continues with the others.
+- Automated verdicts are indications for a human reviewer, not final academic judgments.

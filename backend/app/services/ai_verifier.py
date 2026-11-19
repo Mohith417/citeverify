@@ -31,14 +31,19 @@ def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "").lower()).strip()
 
 
+def _squeeze(text: str) -> str:
+    # PDF/JATS extraction often breaks words with a hyphen + newline
+    return re.sub(r"[\s\-]+", "", (text or "").lower())
+
+
 def quote_in_source(quote: str, source_text: str) -> bool:
     q = _norm(quote)
     if len(q) < 20:
         return False
     if q in _norm(source_text):
         return True
-    # tolerate hyphenation/line-break artefacts from PDF extraction
-    return _norm(re.sub(r"-\s+", "", quote)) in _norm(re.sub(r"-\s+", "", source_text or ""))
+    squeezed = _squeeze(quote)
+    return len(squeezed) >= 20 and squeezed in _squeeze(source_text)
 
 
 def _fallback(claim_id: str, reason: str, **kw) -> AIVerdictOutput:

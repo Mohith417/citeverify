@@ -201,6 +201,23 @@ def _store_text(url: str, text: str) -> None:
         pass
 
 
+def _title_tokens(title: str | None) -> list[str]:
+    return [t for t in re.findall(r"[a-z0-9]{5,}", (title or "").lower())][:10]
+
+
+def looks_like_cited_paper(text: str, title: str | None, doi: str | None) -> bool:
+    """Guard against a provider returning an unrelated open-access PDF."""
+    lowered = (text or "").lower()
+    if doi and doi.lower() in lowered:
+        return True
+    tokens = _title_tokens(title)
+    if not tokens:
+        return True  # nothing to compare against; rely on provenance
+    head = lowered[:12000]
+    hits = sum(1 for token in tokens if token in head)
+    return hits >= max(2, int(len(tokens) * 0.6))
+
+
 def _download_text(url: str, kind: str) -> str:
     cached = _cached_text(url)
     if cached:
@@ -210,6 +227,9 @@ def _download_text(url: str, kind: str) -> str:
         return ""
     if kind == "pdf" or "pdf" in ctype or data[:5] == b"%PDF-":
         text = pdf_to_text(data)
+        # Some repositories answer a PDF URL with an HTML landing/consent page.
+        if len(text) < MIN_FULLTEXT_CHARS:
+            text = html_to_text(data)
     elif "xml" in ctype or data.lstrip()[:1] == b"<":
         text = tei_to_text(data)
         if len(text) < MIN_FULLTEXT_CHARS:
@@ -302,7 +322,7 @@ def retrieve_full_text(
         if not candidate:
             continue
         text = _download_text(candidate, "pdf")
-        if len(text) >= MIN_FULLTEXT_CHARS:
+        if len(text) >= MIN_FULLTEXT_CHARS and looks_like_cited_paper(text, title, doi):
             return FullTextResult(
                 title=title or "", doi=doi, source_url=landing or candidate,
                 full_text=text, full_text_availability="full_text",

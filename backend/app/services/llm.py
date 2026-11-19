@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import time
 from typing import Any, Optional
 
 import httpx
@@ -163,14 +164,25 @@ def _openai_json(system: str, prompt: str, cfg: dict[str, str]) -> dict[str, Any
     }
     headers = {"Authorization": f"Bearer {cfg['key']}", "Content-Type": "application/json"}
     last_error = ""
-    # The provider may reject json_object mode for some models; retry plain.
-    for attempt in range(2):
+    rate_limited = 0
+    # Retry free-tier rate limits with backoff, and fall back to plain JSON mode.
+    for attempt in range(4):
         try:
             r = httpx.post(url, json=body, headers=headers, timeout=120)
         except httpx.HTTPError as exc:
+            if attempt < 3:
+                time.sleep(3 * (attempt + 1))
+                continue
             raise LLMError(f"AI provider unreachable: {exc}") from exc
         if r.status_code == 429:
-            raise LLMError("AI provider rate limit reached (HTTP 429). Try again shortly.")
+            rate_limited += 1
+            if rate_limited > 2:
+                raise LLMError("AI provider rate limit reached (HTTP 429). Try again shortly.")
+            retry_after = r.headers.get("retry-after")
+            wait = float(retry_after) if retry_after and retry_after.replace(".", "").isdigit() else 8.0
+            logger.warning("AI provider rate limited; waiting %.1fs", wait)
+            time.sleep(min(wait, 30))
+            continue
         if r.status_code >= 400:
             last_error = f"HTTP {r.status_code}: {r.text[:300]}"
             if attempt == 0 and "response_format" in r.text:

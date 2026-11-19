@@ -42,7 +42,7 @@ class SemanticScholarProvider(ResearchProvider):
             h["x-api-key"] = self.api_key
         return h
 
-    async def _rate_limit(self) -> None:
+    def _rate_limit(self) -> None:
         elapsed = time.time() - self._last_request
         if elapsed < self._min_interval:
             time.sleep(self._min_interval - elapsed)

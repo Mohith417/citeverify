@@ -1,0 +1,20 @@
+
+> citeverify-frontend@1.0.0 dev
+> vite --host 127.0.0.1
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m308[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+[2m4:49:47 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m5:08:27 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/References.tsx, /src/index.css[22m
+[2m5:25:26 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ui.tsx, /src/index.css[22m
+[2m5:25:28 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/Layout.tsx, /src/components/ui.tsx, /src/pages/Library.tsx, /src/pages/Analysis.tsx, /src/pages/Method.tsx, /src/pages/Upload.tsx, /src/pages/Report.tsx, /src/pages/References.tsx, /src/pages/ClaimDetail.tsx, /src/pages/Landing.tsx, /src/pages/Dashboard.tsx[22m
+[2m5:29:19 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m5:32:51 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ClaimDetail.tsx, /src/index.css[22m
+[2m5:32:52 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/References.tsx, /src/index.css[22m
+[2m5:36:47 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Layout.tsx, /src/index.css[22m
+[2m5:36:50 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m5:36:51 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Upload.tsx, /src/index.css[22m
+[2m5:41:16 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ClaimDetail.tsx, /src/index.css[22m
+[2m5:42:11 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Library.tsx, /src/index.css[22m

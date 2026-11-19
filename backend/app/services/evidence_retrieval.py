@@ -63,6 +63,34 @@ def _get_model():
     return _model
 
 
+NUMBERED_HEADING = re.compile(r"^\d+(?:\.\d+)*[\.)]?\s+[A-Z]")
+HEADING_BLOCKLIST = {
+    "open access", "edited by", "reviewed by", "citation", "keywords", "copyright",
+    "correspondence", "received", "revised", "accepted", "published",
+    "frontiers in psychiatry", "original research", "article", "review article",
+}
+
+
+def _is_heading(line: str, source_title: str = "") -> bool:
+    text = line.strip().rstrip(":")
+    if not text or len(text) > 70 or len(text.split()) > 8:
+        return False
+    if text.endswith((".", ",", ";", "?", "!")):
+        return False
+    low = text.lower()
+    if low in HEADING_BLOCKLIST or low.startswith(("figure", "table", "*", "citation", "keywords")):
+        return False
+    if source_title and low in source_title.lower():
+        return False  # running head / repeated article title
+    if low in KNOWN_SECTIONS:
+        return True
+    if NUMBERED_HEADING.match(text):
+        return True
+    if text.isupper() and 1 <= len(text.split()) <= 6:
+        return True
+    return False
+
+
 def split_into_paragraphs(
     full_text: str,
     *,
@@ -72,26 +100,21 @@ def split_into_paragraphs(
     source_page: Optional[int] = None,
     source_section: Optional[str] = None,
 ) -> list[EvidenceParagraph]:
-    """Split full text into meaningful paragraphs, keeping the current section."""
-    blocks = re.split(r"\n\s*\n", full_text or "")
+    """Split full text into section-aware paragraphs.
+
+    Handles line-oriented PDF text (few blank lines) as well as JATS XML where
+    headings and paragraphs are separated by blank lines.
+    """
     paragraphs: list[EvidenceParagraph] = []
     section = source_section
-    for block in blocks:
-        text = re.sub(r"[ \t]+", " ", block).strip()
-        if not text:
-            continue
-        first_line = text.split("\n", 1)[0].strip()
-        rest = text[len(first_line):].strip()
-        looks_like_heading = (
-            len(first_line) < 70
-            and not first_line.endswith((".", ",", ";", "?", "!"))
-            and len(first_line.split()) <= 8
-        )
-        if (first_line.lower().rstrip(":") in KNOWN_SECTIONS or looks_like_heading) and rest:
-            section = first_line.rstrip(":").title()
-            text = rest
+    buffer: list[str] = []
+
+    def flush() -> None:
+        nonlocal buffer
+        text = re.sub(r"\s+", " ", " ".join(buffer)).strip()
+        buffer = []
         if len(text) < 60:
-            continue
+            return
         for piece in _split_long(text, 1400):
             paragraphs.append(
                 EvidenceParagraph(
@@ -104,6 +127,18 @@ def split_into_paragraphs(
                     paragraph_id=f"p{len(paragraphs)}",
                 )
             )
+
+    for raw_line in (full_text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            flush()
+            continue
+        if _is_heading(line, source_title):
+            flush()
+            section = line.rstrip(":").title()
+            continue
+        buffer.append(line)
+    flush()
     return paragraphs
 
 
@@ -177,6 +212,11 @@ def retrieve_relevant_passages(
     else:
         scored = _lexical_ranking(claim_text, paragraphs)
         threshold = min_score
+        # Normalise BM25-style scores to a 0..1 relative relevance for display.
+        peak = max(scored) if scored else 0.0
+        if peak > 0:
+            scored = [round(value / peak, 3) for value in scored]
+            threshold = 0.15
 
     ranked = sorted(zip(paragraphs, scored), key=lambda x: -x[1])
     picked = [(p, s) for p, s in ranked if s >= threshold][:top_k]

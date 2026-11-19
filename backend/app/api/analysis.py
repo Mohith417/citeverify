@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import time
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -52,6 +53,15 @@ def list_documents(db: Session = Depends(get_db)):
 @router.get("/{document_id}/status", response_model=StatusOut)
 def get_status(document_id: str, db: Session = Depends(get_db)):
     return _get_doc(db, document_id)
+
+
+@router.post("/{document_id}/extract-citations")
+def extract_citations(document_id: str, db: Session = Depends(get_db)):
+    """Inspect citation/reference parsing on its own (used by the tests and for debugging)."""
+    doc = _get_doc(db, document_id)
+    if doc.needs_ocr:
+        raise HTTPException(status_code=400, detail="Scanned PDF: OCR is required before analysis.")
+    return run_citation_extraction(db, doc)
 
 
 # ---------------------------------------------------------------------------
@@ -245,6 +255,9 @@ def _run_pipeline(document_id: str) -> None:
                 reviewed_status="pending",
             ))
             db.commit()
+            # Free AI tiers are token-per-minute limited; smooth the request rate.
+            if ai_verifier.is_available():
+                time.sleep(1.0)
 
         # Claims beyond the configured verification limit stay explicitly unverified.
         for claim in claim_objs[settings.max_verify_claims:]:
@@ -336,6 +349,19 @@ def get_results(document_id: str, db: Session = Depends(get_db)):
         .order_by(Claim.page_number.asc().nulls_last(), Claim.id)
         .all()
     )
+    # Order claims by where they actually appear in the document text.
+    def normalise(value: str) -> str:
+        return " ".join((value or "").split()).lower()
+
+    page_text = {p.page_number: normalise(p.text) for p in doc.pages}
+
+    def position(claim: Claim) -> tuple[int, int]:
+        text = page_text.get(claim.page_number or 0, "")
+        needle = normalise(claim.claim_text)[:60]
+        index = text.find(needle) if needle else -1
+        return (claim.page_number or 0, index if index >= 0 else 10**6)
+
+    claims.sort(key=position)
     rows: list[ClaimRow] = []
     for claim in claims:
         v = claim.verification
