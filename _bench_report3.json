@@ -1,0 +1,173 @@
+[
+  {
+    "round": 1,
+    "file": "llama2.pdf",
+    "doc_id": "829d603f37dc4050bcf0eb9167feb38b",
+    "pages": 77,
+    "status": "completed",
+    "error": null,
+    "elapsed_s": 1696.0,
+    "claims": 12,
+    "verdicts": {
+      "insufficient_evidence": 12
+    },
+    "refs": 27,
+    "refs_matched": 0,
+    "full_text": 0,
+    "abstract_only": 0,
+    "review": 12,
+    "flags": {
+      "missing_citation": 12,
+      "unmatched_citation": 1
+    },
+    "claim_rows": [
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation",
+          "unmatched_citation"
+        ],
+        "text": "The TruthfulQA benchmark consists of 817 questions distributed across 38 categories, including but not limited",
+        "source": "",
+        "markers": [
+          "(Lin et al., 2021)"
+        ]
+      },
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "The truthfulness percentage is relatively low for pretrained models, around 30% to 40% for Falcon, MPT, and th",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "After instruction fine-tuning, both 7B and 13B Llama 2-Chat improved about 20% in truthfulness, 30B Llama 2-Ch",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "Table 45 shows that Mexicans, Latinos, and women tend to be the top three demographic groups with the highest ",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "Thanks to instruction fine-tuning, fine-tuned Llama 2-Chat models of all sizes show an effectively zero percen",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 69,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "Overall, we observe positive sentiment scores for each domain in the BOLD dataset for both pretrained and fine",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "The fine-tuned Llama 2-Chat shows more positivity in sentiment scores than the pretrained versions do.",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "For the religious ideology domain, we observe that the demographic groups of Islam and Sikhism tend to have th",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "For the political ideology domain, the Liberalism and Conservatism groups tend to have the most positive senti",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "Most of the sentiment scores are negative (i.e. less than 0) for the Fascism group.",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "For the gender domain, LLMs tend to have a more positive sentiment towards American female actresses than male",
+        "source": "",
+        "markers": []
+      },
+      {
+        "page": 70,
+        "verdict": "insufficient_evidence",
+        "confidence": "low",
+        "review": true,
+        "flags": [
+          "missing_citation"
+        ],
+        "text": "For the race domain, demographic groups of Asian Americans and Hispanic and Latino Americans tend to have rela",
+        "source": "",
+        "markers": []
+      }
+    ]
+  }
+]
