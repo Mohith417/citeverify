@@ -90,8 +90,45 @@ def _split_authors_apa(s: str) -> list[str]:
     return [p.strip().rstrip(",") for p in parts if p.strip() and "et al" not in p.lower()]
 
 
+INITIAL = re.compile(r"^[A-Z]\.?$")
+
+
+def _dehyphenate(s: str) -> str:
+    # PDF text often breaks words across lines: "Convolu- tional" -> "Convolutional"
+    return re.sub(r"([A-Za-z])-\s+([a-z])", r"\1\2", s)
+
+
+def _split_authors_rest(text: str) -> tuple[str, str]:
+    """Split "Authors. Title..." without tripping over initials ("Quoc V. Le").
+
+    A candidate split is only accepted when what follows really looks like a
+    title (three or more words in its first sentence); this keeps Vancouver
+    author lists such as "Smith J, Lee K." intact.
+    """
+    fallback: tuple[str, str] | None = None
+    for m in re.finditer(r"\.\s+", text):
+        head, rest = text[: m.start()], text[m.start() + 2:]
+        prev = head.split()[-1] if head.split() else ""
+        initial = bool(INITIAL.match(prev)) or prev.lower() in ("al.", "etal.")
+        first = re.split(r"\.\s+|\.[\s]*$", rest, maxsplit=1)[0]
+        if not initial and len(first.split()) >= 3:
+            return head, rest
+        if fallback is None:
+            fallback = (head, rest)
+    return fallback or ("", text)
+
+
+def _last_year(text: str) -> int | None:
+    """Page ranges contain years too (15(1):1929-1958, 2014): prefer the last one."""
+    years = [int(y) for y in re.findall(r"(?<!\d)((?:19|20)\d{2})(?!\d)", text)]
+    years = [y for y in years if 1900 <= y <= 2100]
+    return years[-1] if years else None
+
+
 def parse_entry(label: str, text: str) -> ParsedRef:
     p = ParsedRef(label=label, text=text)
+    text = _dehyphenate(_clean(text))
+    p.text = text
     m = DOI_RE.search(text)
     if m:
         p.doi = m.group(0).rstrip(".,;)").lower()
@@ -103,16 +140,16 @@ def parse_entry(label: str, text: str) -> ParsedRef:
         t = re.match(r"(.+?)[.?](?:\s|$)", rest)
         p.title = _clean(t.group(1)) if t else None
     else:
-        segs = re.split(r"\.\s+", text)
-        if len(segs) > 1:
-            p.authors = [a.strip() for a in segs[0].split(",") if a.strip() and "et al" not in a.lower()]
-            p.title = _clean(segs[1]) or None
-            ym = YEAR_RE.search(" ".join(segs[2:]))
-        else:
-            ym = YEAR_RE.search(text)
-        if ym is None:
-            ym = YEAR_RE.search(text)
-        p.year = int(ym.group(1)) if ym else None
+        auth_s, rest = _split_authors_rest(text)
+        if auth_s:
+            p.authors = [
+                a.strip().rstrip(".")
+                for a in re.split(r",\s*|\s+and\s+", auth_s)
+                if a.strip() and "et al" not in a.lower()
+            ]
+            t = re.split(r"\.\s+|,\s+(?:19|20)\d{2}\b", rest, maxsplit=1)[0]
+            p.title = _clean(t) or None
+        p.year = _last_year(text)
     if p.title is not None and len(p.title) < 8:
         p.title = None
     if not p.label and p.authors and p.year:

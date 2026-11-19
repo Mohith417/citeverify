@@ -8,15 +8,16 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "border-2 border-ink bg-violet text-white shadow-block-sm hover:bg-violet-deep hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+    "border-2 border-ink bg-violet text-paper shadow-block-xs hover:bg-violet-deep hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
   secondary:
-    "border-2 border-ink bg-lavender text-ink shadow-block-sm hover:bg-[#cec5ff] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+    "border-2 border-ink bg-lavender text-ink shadow-block-xs hover:bg-[#cfc4d9] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
   outline:
-    "border-2 border-ink bg-white text-ink hover:bg-lavender-soft hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
-  ghost: "border-2 border-transparent bg-transparent text-ink/70 hover:border-ink/15 hover:bg-lavender-soft hover:text-ink",
-  dark: "border-2 border-ink bg-ink text-white shadow-block-sm hover:bg-[#241f47] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+    "border-2 border-ink bg-white text-ink hover:bg-lavender-soft hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-xs active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+  ghost:
+    "border-2 border-transparent bg-transparent text-ink/60 hover:border-ink/20 hover:bg-white hover:text-ink",
+  dark: "border-2 border-ink bg-ink text-paper shadow-block-xs hover:bg-[#35322b] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
   coral:
-    "border-2 border-ink bg-coral text-white shadow-block-sm hover:bg-[#f05a33] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+    "border-2 border-ink bg-coral text-paper shadow-block-xs hover:bg-[#b56c4f] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-block-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
 };
 
 const SIZES: Record<ButtonSize, string> = {
@@ -32,7 +33,7 @@ export const Button = forwardRef<
   <button
     ref={ref}
     className={cn(
-      "inline-flex select-none items-center justify-center rounded-md font-bold uppercase tracking-[0.02em] transition-all duration-150",
+      "sheen inline-flex select-none items-center justify-center rounded-md font-bold uppercase tracking-[0.02em] transition-all duration-200 ease-smooth",
       "disabled:pointer-events-none disabled:opacity-50",
       VARIANTS[variant],
       SIZES[size],
@@ -73,7 +74,7 @@ export function VerdictBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-sm font-semibold",
+        "inline-flex items-center gap-1.5 rounded-sm font-semibold transition-colors duration-200",
         size === "sm" && "px-2 py-0.5 text-[10.5px]",
         size === "md" && "px-2.5 py-1 text-[11.5px]",
         size === "lg" && "px-3 py-1.5 text-[13px]",
@@ -105,7 +106,7 @@ export function ConfidenceMeter({
           <span
             key={bar}
             className={cn(
-              "w-[4px] rounded-sm",
+              "w-[4px] rounded-sm transition-colors duration-200",
               bar === 1 && "h-1.5",
               bar === 2 && "h-2.5",
               bar === 3 && "h-3.5",
@@ -146,16 +147,23 @@ export function StatTile({
   tone?: "white" | "lavender" | "violet" | "coral" | "mint" | "ink";
 }) {
   const tones: Record<string, string> = {
-    white: "bg-white text-ink",
+    white: "bg-white text-ink hover:bg-lavender-soft",
     lavender: "bg-lavender-soft text-ink",
-    violet: "bg-violet text-white",
-    coral: "bg-coral text-white",
+    violet: "bg-violet text-paper",
+    coral: "bg-coral text-paper",
     mint: "bg-mint text-ink",
-    ink: "bg-ink text-white",
+    ink: "bg-ink text-paper",
   };
   return (
-    <div className={cn("flex flex-col gap-1 border-2 border-ink p-4", tones[tone])}>
-      <span className="font-display text-2xl leading-none">{value}</span>
+    <div
+      className={cn(
+        "group flex flex-col gap-1 border-2 border-ink p-4 transition-all duration-200 ease-smooth hover:-translate-y-[3px] hover:shadow-block-xs",
+        tones[tone],
+      )}
+    >
+      <span className="font-display text-2xl leading-none transition-transform duration-300 ease-smooth group-hover:-translate-y-[1px] group-hover:scale-[1.06]">
+        {value}
+      </span>
       <p className="text-[12px] font-semibold">{label}</p>
       {hint ? <p className="text-[11px] text-slate">{hint}</p> : null}
     </div>
@@ -172,7 +180,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 border-2 border-dashed border-ink/40 bg-white/70 px-6 py-14 text-center">
+    <div className="tilt flex flex-col items-center gap-3 border-2 border-dashed border-ink/40 bg-white/70 px-6 py-14 text-center hover:border-ink">
       <p className="display text-lg">{title}</p>
       <p className="max-w-md text-sm leading-relaxed text-slate">{description}</p>
       {action}

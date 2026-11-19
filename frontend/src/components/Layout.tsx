@@ -10,15 +10,15 @@ export function Logo({ light = false, size = 36 }: { light?: boolean; size?: num
         src="/logo.png"
         alt=""
         style={{ width: size, height: size }}
-        className="shrink-0 border-2 border-ink object-cover transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
+        className="shrink-0 border-2 border-ink object-cover transition-all duration-500 ease-smooth group-hover:-rotate-6 group-hover:scale-105 group-hover:shadow-block-xs"
       />
       <span
         className={cn(
           "font-display text-[17px] uppercase leading-none tracking-[-0.02em]",
-          light ? "text-white" : "text-ink",
+          light ? "text-paper" : "text-ink",
         )}
       >
-        Cite<span className="text-violet group-hover:text-coral">Verify</span>
+        Cite<span className="text-violet transition-colors duration-300 group-hover:text-coral">Verify</span>
       </span>
     </Link>
   );
@@ -41,13 +41,13 @@ export function Layout() {
   const location = useLocation();
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="overflow-hidden border-b-2 border-ink bg-ink py-1.5 text-white">
+      <div className="overflow-hidden border-b-2 border-ink bg-ink py-1.5 text-paper">
         <div className="flex w-max animate-marquee items-center gap-8 hover-pause">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0 items-center gap-8">
               {TICKER.map((item) => (
                 <span key={item} className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em]">
-                  <span className="h-1 w-1 rounded-full bg-coral" />
+                  <span className="h-1 w-1 rotate-45 bg-coral" />
                   {item}
                 </span>
               ))}
@@ -56,20 +56,20 @@ export function Layout() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo />
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-6 md:flex">
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "border-2 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors",
+                    "font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200",
                     isActive || location.pathname.startsWith(item.to)
-                      ? "border-ink bg-ink text-white"
-                      : "border-transparent text-ink/60 hover:border-ink hover:bg-white hover:text-ink",
+                      ? "link-line text-ink after:scale-x-100"
+                      : "link-line text-ink/50 hover:text-ink",
                   )
                 }
               >
@@ -80,7 +80,7 @@ export function Layout() {
           <Link to="/upload">
             <Button size="sm">
               New analysis
-              <ArrowUpRight className="h-3.5 w-3.5" />
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-[1px]" />
             </Button>
           </Link>
         </div>
@@ -90,25 +90,30 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="mt-16 border-t-2 border-ink bg-ink text-white">
+      <footer className="mt-16 border-t-2 border-ink bg-ink text-paper">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <Logo light />
-            <p className="max-w-xs text-[12px] leading-relaxed text-white/60">
-              Checks whether cited research actually supports the claim — and shows the passage that decides it.
+            <p className="max-w-xs text-[12px] leading-relaxed text-paper/55">
+              Checks whether cited research actually supports the claim — and shows the passage that
+              decides it.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/60">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-paper/55">
             {NAV.map((item) => (
-              <Link key={item.to} to={item.to} className="transition-colors hover:text-white">
+              <Link
+                key={item.to}
+                to={item.to}
+                className="link-line transition-colors duration-200 hover:text-paper"
+              >
                 {item.label}
               </Link>
             ))}
-            <span className="hidden h-4 w-px bg-white/20 sm:block" />
+            <span className="hidden h-4 w-px bg-paper/20 sm:block" />
             <span>Crossref · OpenAlex · Europe PMC</span>
           </div>
         </div>
-        <div className="border-t border-white/15 px-4 py-3 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
+        <div className="border-t border-paper/15 px-4 py-3 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-paper/40">
           Automated verdicts stay open to human review
         </div>
       </footer>
@@ -130,9 +135,14 @@ export function PageHeading({
   return (
     <div className="flex flex-col gap-4 border-b-2 border-ink pb-5 md:flex-row md:items-end md:justify-between">
       <div className="space-y-3">
-        <p className="label-mono">{eyebrow}</p>
+        <p className="label-mono flex items-center gap-2">
+          <span className="h-2 w-2 rotate-45 bg-coral" />
+          {eyebrow}
+        </p>
         <h1 className="display text-3xl sm:text-[38px]">{title}</h1>
-        {description ? <p className="max-w-xl text-[13px] leading-relaxed text-slate">{description}</p> : null}
+        {description ? (
+          <p className="max-w-xl text-[13px] leading-relaxed text-slate">{description}</p>
+        ) : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </div>

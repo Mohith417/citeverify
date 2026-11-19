@@ -15,6 +15,7 @@ from ..models import Claim, ClaimReference, Document, Evidence, Reference, Verif
 from ..schemas.claim_schema import ReferenceOut
 from ..schemas.document_schema import ClaimRow, DocumentOut, DocumentResults, StatusOut, Summary
 from ..services import claim_extractor, ai_verifier, detect_issues
+from ..services.citation_extractor import find_citations
 from ..services.citation_pipeline import match_marker, run_citation_extraction
 from ..services.discovery_pipeline import run_paper_discovery
 from ..services.evidence_retrieval import retrieve_relevant_passages, split_into_paragraphs
@@ -91,12 +92,17 @@ def _run_pipeline(document_id: str) -> None:
 
         claim_objs: list[Claim] = []
         for item in extracted:
+            # The LLM occasionally drops in-text markers; recover them from the
+            # verbatim claim text so citation linking never depends on that.
+            markers = list(item.citation_markers or [])
+            markers += [c.marker for c in find_citations(item.claim_text)]
+            markers = [m for m in dict.fromkeys(markers) if m.strip()]
             claim = Claim(
                 document_id=doc.id,
                 claim_text=item.claim_text,
                 page_number=item.page_number,
                 section=item.section,
-                citation_markers=item.citation_markers or [],
+                citation_markers=markers,
                 claim_category=item.claim_category,
                 flags=[],
             )

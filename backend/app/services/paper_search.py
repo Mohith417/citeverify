@@ -40,7 +40,7 @@ class Candidate:
 
 # ---------------- HTTP (cached, host-restricted, retrying) ----------------
 
-def fetch_json(url: str, params: dict | None = None, retries: int = 2):
+def fetch_json(url: str, params: dict | None = None, retries: int = 1):
     # returns (status_code, json_or_None); status 0 means network failure
     host = urlparse(url).hostname
     if host not in ALLOWED_HOSTS:
@@ -62,7 +62,7 @@ def fetch_json(url: str, params: dict | None = None, retries: int = 2):
         send["api_key"] = settings.openalex_api_key  # added after cache key, never stored
     for attempt in range(retries + 1):
         try:
-            r = httpx.get(url, params=send, headers=headers, timeout=20)
+            r = httpx.get(url, params=send, headers=headers, timeout=12)
         except httpx.HTTPError:
             time.sleep(1.5 * (attempt + 1))
             continue

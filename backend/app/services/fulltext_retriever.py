@@ -16,6 +16,7 @@ import ipaddress
 import logging
 import re
 import socket
+import time
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
@@ -87,23 +88,33 @@ def fetch_bytes(url: str) -> tuple[Optional[bytes], str]:
     url = safe_url(url) or ""
     if not url:
         return None, ""
-    try:
-        with httpx.stream("GET", url, timeout=30, follow_redirects=True,
-                          headers={"User-Agent": "CiteVerify/1.0 (research verification)"}) as r:
-            if r.status_code != 200:
-                return None, ""
-            chunks, total = [], 0
-            for chunk in r.iter_bytes():
-                total += len(chunk)
-                if total > MAX_BYTES:
-                    logger.info("Download exceeded size cap: %s", url)
+    # Repositories rate-limit bursts (arXiv especially): retry once before
+    # declaring that no open-access full text exists.
+    for attempt in range(2):
+        try:
+            with httpx.stream("GET", url, timeout=30, follow_redirects=True,
+                              headers={"User-Agent": "CiteVerify/1.0 (research verification)"}) as r:
+                if r.status_code in (429, 503) and attempt == 0:
+                    time.sleep(1.5)
+                    continue
+                if r.status_code != 200:
                     return None, ""
-                chunks.append(chunk)
-            ctype = r.headers.get("content-type", "").lower()
-            return b"".join(chunks), ctype
-    except httpx.HTTPError as exc:
-        logger.info("Fetch failed for %s: %s", url, exc)
-        return None, ""
+                chunks, total = [], 0
+                for chunk in r.iter_bytes():
+                    total += len(chunk)
+                    if total > MAX_BYTES:
+                        logger.info("Download exceeded size cap: %s", url)
+                        return None, ""
+                    chunks.append(chunk)
+                ctype = r.headers.get("content-type", "").lower()
+                return b"".join(chunks), ctype
+        except httpx.HTTPError as exc:
+            logger.info("Fetch failed for %s: %s", url, exc)
+            if attempt == 0:
+                time.sleep(1.5)
+                continue
+            return None, ""
+    return None, ""
 
 
 # --------------------------------------------------------------------------
