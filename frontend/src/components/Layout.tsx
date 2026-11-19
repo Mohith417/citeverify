@@ -1,6 +1,5 @@
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
-import { Button } from "./ui";
+import { useState } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 export function Logo({ light = false, size = 36 }: { light?: boolean; size?: number }) {
@@ -39,8 +38,44 @@ const TICKER = [
 
 export function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [dragging, setDragging] = useState(false);
+
+  // Drop a PDF anywhere in the app and it starts verifying: the header button
+  // used to duplicate the hero and CTA upload links, this replaces it.
+  function handleDrop(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setDragging(false);
+    const file = event.dataTransfer.files?.[0];
+    if (file && file.name.toLowerCase().endsWith(".pdf")) {
+      navigate("/upload", { state: { file } });
+    }
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div
+      className="flex min-h-screen flex-col"
+      onDragOver={(event) => {
+        if (Array.from(event.dataTransfer.types).includes("Files")) {
+          event.preventDefault();
+          setDragging(true);
+        }
+      }}
+      onDragLeave={(event) => {
+        if (event.relatedTarget === null) setDragging(false);
+      }}
+      onDrop={handleDrop}
+    >
+      {dragging ? (
+        <div className="pointer-events-none fixed inset-0 z-50 grid place-items-center bg-ink/75 p-6 text-paper">
+          <div className="border-2 border-paper px-10 py-8 text-center">
+            <p className="display text-3xl sm:text-4xl">Drop to verify</p>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-paper/60">
+              one text-based PDF · max 20 MB
+            </p>
+          </div>
+        </div>
+      ) : null}
       <div className="overflow-hidden border-b-2 border-ink bg-ink py-1.5 text-paper">
         <div className="flex w-max animate-marquee items-center gap-8 hover-pause">
           {[0, 1].map((copy) => (
@@ -59,17 +94,17 @@ export function Layout() {
       <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo />
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="hidden items-center gap-7 md:flex">
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200",
+                    "font-mono text-[13px] uppercase tracking-[0.12em] transition-colors duration-200",
                     isActive || location.pathname.startsWith(item.to)
-                      ? "link-line text-ink after:scale-x-100"
-                      : "link-line text-ink/50 hover:text-ink",
+                      ? "link-line font-semibold text-ink after:scale-x-100"
+                      : "link-line text-ink/65 hover:text-ink",
                   )
                 }
               >
@@ -77,12 +112,10 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
-          <Link to="/upload">
-            <Button size="sm">
-              New analysis
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-[1px]" />
-            </Button>
-          </Link>
+          <span className="hidden shrink-0 items-center gap-2 border-2 border-ink/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink/55 lg:inline-flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-mint ring-1 ring-ink/40" />
+            Drag a PDF anywhere
+          </span>
         </div>
       </header>
 

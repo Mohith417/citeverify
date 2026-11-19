@@ -446,11 +446,16 @@ export function Landing() {
                 Free research APIs · no paywall bypassing
               </p>
             </div>
-            <Link to="/upload" className="arrow-slide">
-              <Button size="lg" variant="coral">
-                Start verifying <ArrowUpRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="flex flex-col items-start gap-2 md:items-end">
+              <Link to="/method" className="arrow-slide">
+                <Button size="lg" variant="coral">
+                  See what gets checked <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
+                or drag a PDF anywhere on this page
+              </span>
+            </div>
           </div>
         </div>
       </section>

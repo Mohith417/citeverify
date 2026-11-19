@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AlertTriangle, ArrowRight, FileText, History, Info, UploadCloud, X } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import type { DocumentInfo, Health } from "@/lib/types";
@@ -25,6 +25,8 @@ const STEPS = ["Extract claims & citations", "Retrieve cited papers", "Compare e
 
 export function Upload() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const incoming = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -61,6 +63,16 @@ export function Upload() {
     }
     setFile(selected);
   }, []);
+
+  // A PDF dropped anywhere in the app lands here already selected.
+  useEffect(() => {
+    if (incoming.current) return;
+    const dropped = (location.state as { file?: File } | null)?.file;
+    if (dropped) {
+      incoming.current = true;
+      pick(dropped);
+    }
+  }, [location.state, pick]);
 
   async function submit() {
     if (!file) return;
