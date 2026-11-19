@@ -98,7 +98,7 @@ export function Library() {
                     </span>
                     <div className="min-w-0">
                       <h2 className="truncate text-[13.5px] font-semibold">{doc.filename}</h2>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-slate">
+                      <p className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] text-slate">
                         {formatDate(doc.uploaded_at)} · {doc.page_count} pages
                       </p>
                     </div>
@@ -106,7 +106,7 @@ export function Library() {
                   <div className="flex shrink-0 items-center gap-2">
                     <span
                       className={[
-                        "hidden border px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.08em] sm:inline",
+                        "hidden border px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] sm:inline",
                         done ? "border-emerald-700/40 bg-mint text-emerald-800" : "border-ink/20 bg-paper text-slate",
                       ].join(" ")}
                     >

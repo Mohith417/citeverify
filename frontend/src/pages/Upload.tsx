@@ -40,6 +40,8 @@ const GUARANTEES = [
   { icon: ShieldCheck, label: "Findings stay open to human review" },
 ];
 
+const CHIPS = ["text-based PDF", "any publisher", "never guessed"];
+
 export function Upload() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,20 +108,29 @@ export function Upload() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="grid items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+    <div className="mx-auto w-full max-w-6xl px-4 py-9 sm:px-6 sm:py-12">
+      <div className="grid items-start gap-10 lg:grid-cols-[1.06fr_0.94fr] lg:gap-12">
         {/* left: the job to be done */}
-        <div>
+        <div className="animate-rise">
           <div className="flex items-center gap-3">
             <span className="h-3 w-3 bg-coral ring-2 ring-ink" />
-            <span className="label-mono text-ink/70">New verification</span>
+            <span className="label-mono">New verification</span>
           </div>
 
-          <h1 className="display mt-4 text-[40px] leading-[0.92] sm:text-[56px]">
-            Verify <span className="text-violet">a&nbsp;document</span>
+          <h1 className="display mt-4 text-[42px] leading-[0.9] sm:text-[58px]">
+            Verify
+            <br />
+            <span className="relative inline-block bg-violet px-2 text-paper">
+              a document
+              <span
+                className="absolute -bottom-1.5 -right-1.5 -z-10 h-full w-full bg-coral"
+                aria-hidden
+              />
+            </span>
+            <span className="ml-1 text-coral">.</span>
           </h1>
 
-          <p className="mt-4 max-w-lg text-[14px] leading-relaxed text-ink/65">
+          <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink/70">
             One text-based PDF. Every page is read, each claim is pulled out with its citation, and
             the cited paper is matched to the real publication before anything is judged.
           </p>
@@ -142,25 +153,37 @@ export function Upload() {
               pick(event.dataTransfer.files?.[0] ?? null);
             }}
             className={[
-              "group relative mt-6 flex min-h-[268px] cursor-pointer flex-col items-center justify-center gap-4 border-2 border-dashed p-7 text-center transition-all duration-200",
+              "group relative mt-7 flex min-h-[300px] cursor-pointer flex-col items-center justify-center gap-5 overflow-hidden border-2 border-dashed p-8 text-center transition-all duration-300 ease-smooth",
               dragging
                 ? "border-ink bg-lavender shadow-block"
-                : "border-ink/50 bg-white hover:-translate-y-0.5 hover:border-ink hover:bg-lavender-soft hover:shadow-block-sm",
+                : "border-ink/55 bg-white hover:-translate-y-1 hover:border-ink hover:shadow-block-sm",
             ].join(" ")}
           >
-            <div className="flex h-16 w-16 items-center justify-center border-2 border-ink bg-lavender transition-transform duration-300 ease-smooth group-hover:-rotate-6 group-hover:scale-105">
+            <span className="pointer-events-none absolute inset-0 grid-lines opacity-40" aria-hidden />
+            {["left-2 top-2", "right-2 top-2", "left-2 bottom-2", "right-2 bottom-2"].map((pos) => (
+              <span
+                key={pos}
+                className={`pointer-events-none absolute h-4 w-4 border-ink/30 ${pos} ${
+                  pos.includes("left") ? "border-l-2" : "border-r-2"
+                } ${pos.includes("top") ? "border-t-2" : "border-b-2"}`}
+                aria-hidden
+              />
+            ))}
+
+            <div className="relative flex h-16 w-16 items-center justify-center border-2 border-ink bg-lavender transition-all duration-300 ease-smooth group-hover:-rotate-6 group-hover:scale-105 group-hover:bg-[#cfc4d9]">
               <UploadCloud className="h-7 w-7" />
+              <span className="absolute -right-1.5 -top-1.5 h-3 w-3 border-2 border-ink bg-coral" aria-hidden />
             </div>
 
             {file ? (
-              <div className="w-full max-w-sm space-y-3">
+              <div className="relative w-full max-w-sm space-y-3">
                 <div className="flex items-center justify-center gap-2">
                   <FileText className="h-4 w-4 text-violet" />
-                  <p className="truncate text-sm font-semibold">{file.name}</p>
+                  <p className="truncate text-[15px] font-semibold">{file.name}</p>
                   <button
                     type="button"
                     aria-label="Remove file"
-                    className="text-slate transition-colors hover:text-danger"
+                    className="text-ink/50 transition-colors hover:text-danger"
                     onClick={(event) => {
                       event.stopPropagation();
                       setFile(null);
@@ -170,34 +193,35 @@ export function Upload() {
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-                  {(file.size / (1024 * 1024)).toFixed(2)} MB · ready
+                <p className="micro">
+                  {(file.size / (1024 * 1024)).toFixed(2)} MB · ready to verify
                 </p>
                 {busy ? (
                   <div className="space-y-2">
                     <ProgressBar value={progress} />
-                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-                      uploading · {progress}%
-                    </p>
+                    <p className="micro">uploading · {progress}%</p>
                   </div>
                 ) : null}
               </div>
             ) : (
               <>
-                <div className="space-y-1">
-                  <p className="display text-xl">Drop a PDF here</p>
-                  <p className="text-[13px] text-slate">or click to browse · max {MAX_MB} MB</p>
+                <div className="relative space-y-1.5">
+                  <p className="display text-2xl sm:text-[27px]">Drop a PDF here</p>
+                  <p className="text-[14px] font-medium text-ink/60">
+                    or click to browse · max {MAX_MB} MB
+                  </p>
                 </div>
-                <div className="flex flex-wrap justify-center gap-1.5">
-                  {["text-based PDF", "any publisher", "never guessed"].map((chip) => (
+                <div className="relative flex flex-wrap justify-center gap-2">
+                  {CHIPS.map((chip) => (
                     <span
                       key={chip}
-                      className="border border-ink/20 bg-paper px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-ink/60"
+                      className="border-2 border-ink/15 bg-paper px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/70"
                     >
                       {chip}
                     </span>
                   ))}
                 </div>
+                <p className="relative micro">or drag a PDF anywhere in the app</p>
               </>
             )}
             <input
@@ -210,29 +234,29 @@ export function Upload() {
           </div>
 
           {error ? (
-            <div className="mt-3 flex items-start gap-2 border-2 border-danger bg-red-50 p-3 text-[12.5px] text-danger">
+            <div className="mt-3 flex items-start gap-2 border-2 border-danger bg-red-50 p-3 text-[13px] font-medium text-danger">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
               <p>{error}</p>
             </div>
           ) : null}
 
           {!health?.ai_configured && health ? (
-            <div className="mt-3 flex items-start gap-2 border-2 border-ink bg-amber/30 p-3 text-[12px] leading-relaxed">
+            <div className="mt-3 flex items-start gap-2 border-2 border-ink bg-amber/30 p-3 text-[13px] leading-relaxed">
               <Info className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 No AI key configured, so verdicts will stay <strong>insufficient evidence</strong>{" "}
                 for human review. Add one in{" "}
-                <code className="border border-ink/20 bg-white px-1 text-[11px]">backend/.env</code>.
+                <code className="border border-ink/20 bg-white px-1 text-[12px]">backend/.env</code>.
               </p>
             </div>
           ) : null}
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center gap-4">
             <Button
               size="lg"
               onClick={submit}
               disabled={!file || busy}
-              className="arrow-slide min-w-[220px]"
+              className="arrow-slide min-w-[240px] text-[15px]"
             >
               {busy ? (
                 <Spinner className="border-white/40 border-t-white" />
@@ -241,64 +265,58 @@ export function Upload() {
               )}
               {busy ? "Uploading…" : "Upload and analyze"}
             </Button>
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-              runs in the background · live stages
-            </span>
+            <span className="micro text-[11.5px]">runs in the background · live stages</span>
           </div>
 
-          <div className="mt-4 grid gap-[2px] border-2 border-ink bg-ink sm:grid-cols-3">
+          <div className="mt-5 grid gap-[2px] border-2 border-ink bg-ink sm:grid-cols-3">
             {STEPS.map((step, index) => (
               <div
                 key={step}
-                className="group bg-paper px-3 py-2.5 transition-colors hover:bg-white"
+                className="group flex items-start gap-2 bg-paper px-3 py-3 transition-colors hover:bg-white"
               >
-                <p className="font-mono text-[9px] tracking-[0.14em] text-violet">0{index + 1}</p>
-                <p className="mt-0.5 text-[11.5px] leading-snug text-ink/70">{step}</p>
+                <span className="font-display text-[15px] leading-none text-violet transition-transform duration-300 group-hover:-translate-y-0.5">
+                  0{index + 1}
+                </span>
+                <p className="text-[12.5px] font-semibold leading-snug text-ink/75">{step}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* right: what comes back */}
-        <aside className="relative">
+        <aside className="group relative mt-2 animate-rise [animation-delay:120ms] lg:mt-6">
           <div
-            className="absolute inset-x-3 top-3 h-full border-2 border-ink bg-lavender"
+            className="absolute inset-x-4 top-4 h-full border-2 border-ink bg-lavender transition-transform duration-300 ease-smooth group-hover:translate-x-1 group-hover:translate-y-1"
             aria-hidden
           />
-          <div className="relative border-2 border-ink bg-white">
-            <div className="flex items-center justify-between border-b-2 border-ink px-4 py-2.5">
-              <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-slate">
-                what comes back
-              </p>
-              <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-violet">
+          <div className="relative border-2 border-ink bg-white transition-transform duration-300 ease-smooth group-hover:-translate-y-1">
+            <div className="flex items-center justify-between border-b-2 border-ink px-4 py-3">
+              <p className="label-mono">What comes back</p>
+              <span className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-violet">
                 <span className="h-1.5 w-1.5 rounded-full bg-mint ring-1 ring-ink/40" /> report
               </span>
             </div>
 
-            <div className="space-y-3 p-4">
+            <div className="space-y-4 p-4 sm:p-5">
               <div>
-                <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-slate">
-                  claim · p. 3
-                </p>
-                <p className="mt-1 text-[13px] font-semibold leading-snug">
+                <p className="micro">Claim · p. 3</p>
+                <p className="mt-1.5 text-[15px] font-semibold leading-snug">
                   “The method improves accuracy over the baselines.”
                 </p>
               </div>
 
-              <div className="flex items-center justify-between border-y-2 border-line py-2">
-                <VerdictBadge verdict="partially_supported" size="sm" />
-                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-slate">
-                  confidence · medium
-                </span>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-y-2 border-line py-2.5">
+                <VerdictBadge verdict="partially_supported" />
+                <span className="micro">Confidence · medium</span>
               </div>
 
-              <div className="border-l-2 border-violet bg-lavender-soft p-2.5">
-                <p className="flex gap-2 text-[11.5px] leading-relaxed text-ink/75">
-                  <Quote className="mt-0.5 h-3 w-3 shrink-0 text-coral" />
+              <div className="border-l-4 border-violet bg-lavender-soft p-3">
+                <p className="flex gap-2 text-[13px] leading-relaxed text-ink/80">
+                  <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-coral" />
                   “Gains hold on three of five datasets; two show no significant difference.”
                 </p>
-                <p className="mt-1.5 font-mono text-[8.5px] uppercase tracking-[0.12em] text-violet">
-                  source · results §4.2 · open access
+                <p className="mt-2 font-mono text-[10.5px] font-semibold uppercase tracking-[0.1em] text-violet">
+                  Source · results §4.2 · open access
                 </p>
               </div>
 
@@ -308,35 +326,37 @@ export function Upload() {
                   { v: "6", l: "verdicts" },
                   { v: "100%", l: "reviewable" },
                 ].map((item) => (
-                  <div key={item.l} className="bg-paper px-2 py-2">
-                    <dt className="font-display text-lg leading-none">{item.v}</dt>
-                    <dd className="mt-1 font-mono text-[8.5px] uppercase tracking-[0.1em] text-slate">
+                  <div key={item.l} className="bg-paper px-2.5 py-2.5">
+                    <dt className="font-display text-2xl leading-none">{item.v}</dt>
+                    <dd className="mt-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/60">
                       {item.l}
                     </dd>
                   </div>
                 ))}
               </dl>
 
-              <ul className="space-y-1.5 pt-1">
+              <ul className="space-y-2">
                 {GUARANTEES.map(({ icon: Icon, label }) => (
-                  <li key={label} className="flex items-start gap-2 text-[11.5px] text-ink/65">
-                    <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet" />
+                  <li key={label} className="flex items-start gap-2 text-[12.5px] font-medium text-ink/75">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-violet" />
                     {label}
                   </li>
                 ))}
               </ul>
             </div>
           </div>
+
+          <span className="absolute -right-3 -top-3 rotate-6 border-2 border-ink bg-coral px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-paper shadow-block-xs">
+            sample
+          </span>
         </aside>
       </div>
 
-      <section className="mt-12">
-        <div className="flex flex-wrap items-end justify-between gap-2 border-b-2 border-ink pb-2">
-          <h2 className="display text-xl">Recent verifications</h2>
+      <section className="mt-14">
+        <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-ink pb-3">
+          <h2 className="display text-2xl">Recent verifications</h2>
           <div className="flex items-center gap-4">
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
-              {documents.length} stored
-            </span>
+            <span className="micro">{documents.length} stored</span>
             <Link to="/library">
               <Button variant="ghost" size="sm">
                 <History className="h-3.5 w-3.5" /> All history
@@ -350,7 +370,7 @@ export function Upload() {
             <Spinner /> Loading…
           </div>
         ) : documents.length === 0 ? (
-          <p className="py-6 text-[13px] text-slate">
+          <p className="py-6 text-[14px] text-slate">
             Nothing here yet — your first analysis will show up.
           </p>
         ) : (
@@ -361,16 +381,16 @@ export function Upload() {
                 <Link
                   key={doc.id}
                   to={done ? `/documents/${doc.id}` : `/analysis/${doc.id}`}
-                  className="group flex items-center justify-between gap-3 border-b-2 border-ink/10 px-4 py-3 transition-colors last:border-b-0 hover:bg-lavender-soft"
+                  className="group flex items-center justify-between gap-3 border-b-2 border-ink/10 px-4 py-3.5 transition-colors last:border-b-0 hover:bg-lavender-soft"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="font-mono text-[10px] text-ink/30">
+                    <span className="font-display text-[13px] leading-none text-ink/30">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <FileText className="h-4 w-4 shrink-0 text-violet" />
                     <div className="min-w-0">
-                      <p className="truncate text-[13px] font-semibold">{doc.filename}</p>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-slate">
+                      <p className="truncate text-[14px] font-semibold">{doc.filename}</p>
+                      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/55">
                         {formatDate(doc.uploaded_at)} · {doc.page_count} pages
                       </p>
                     </div>
@@ -378,15 +398,15 @@ export function Upload() {
                   <div className="flex shrink-0 items-center gap-3">
                     <span
                       className={[
-                        "border px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.08em]",
+                        "border-2 px-2 py-0.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em]",
                         done
-                          ? "border-emerald-700/40 bg-mint text-emerald-800"
-                          : "border-ink/20 bg-paper text-slate",
+                          ? "border-emerald-700/40 bg-mint text-emerald-900"
+                          : "border-ink/20 bg-paper text-ink/60",
                       ].join(" ")}
                     >
                       {STATUS_LABEL[doc.processing_status] ?? doc.processing_status}
                     </span>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-slate transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
+                    <ArrowUpRight className="h-4 w-4 text-ink/45 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
                   </div>
                 </Link>
               );

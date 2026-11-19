@@ -175,7 +175,7 @@ export function Dashboard() {
                 <span className="font-display text-3xl">{summary.total_claims}</span>
                 <span className="text-sm text-slate">claims verified against their cited sources</span>
               </div>
-              <span className="text-[11.5px] text-slate">
+              <span className="text-[11.5px] font-semibold text-slate">
                 {summary.needs_human_review} to review · {summary.references_matched} of{" "}
                 {summary.references_cited || 0} cited sources matched · {summary.total_citations} citations
               </span>
@@ -262,7 +262,7 @@ export function Dashboard() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-2 border-ink bg-lavender-soft px-4 py-3">
-            <p className="text-[12px] text-ink/70">
+            <p className="text-[12px] font-semibold text-ink/70">
               Verdicts are evidence-backed indications, not final academic judgments.
             </p>
             <Link
@@ -285,12 +285,12 @@ function ClaimItem({ claim, documentId, index }: { claim: ClaimRow; documentId: 
       to={`/documents/${documentId}/claims/${claim.claim_id}`}
       className="group flex items-start gap-3 border-2 border-ink bg-white p-4 transition-all duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-block-sm"
     >
-      <span className="mt-0.5 hidden w-5 shrink-0 font-mono text-[10px] text-slate sm:block">
+      <span className="mt-0.5 hidden w-5 shrink-0 font-mono text-[11.5px] font-semibold text-slate sm:block">
         {String(index).padStart(2, "0")}
       </span>
       <div className="min-w-0 flex-1">
         <p className="line-clamp-2 text-[13.5px] font-medium leading-snug text-ink">{claim.claim_text}</p>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold text-slate">
           <span>p. {claim.page_number ?? "—"}</span>
           <span className="font-mono">{claim.citation_markers.length ? claim.citation_markers.join(" ") : "no citation"}</span>
           {claim.source_title ? (

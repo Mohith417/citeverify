@@ -52,7 +52,7 @@ export function Badge({ children, className }: { children: ReactNode; className?
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-sm bg-paper px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-slate",
+        "inline-flex items-center gap-1.5 rounded-sm bg-paper px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/65",
         className,
       )}
     >
@@ -75,9 +75,9 @@ export function VerdictBadge({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-sm font-semibold transition-colors duration-200",
-        size === "sm" && "px-2 py-0.5 text-[10.5px]",
-        size === "md" && "px-2.5 py-1 text-[11.5px]",
-        size === "lg" && "px-3 py-1.5 text-[13px]",
+        size === "sm" && "px-2 py-0.5 text-[11.5px]",
+        size === "md" && "px-2.5 py-1 text-[12.5px]",
+        size === "lg" && "px-3 py-1.5 text-[14px]",
         meta.className,
         className,
       )}
@@ -115,7 +115,9 @@ export function ConfidenceMeter({
           />
         ))}
       </div>
-      <span className="text-[10.5px] text-slate">{meta.label.replace(" confidence", "")}</span>
+      <span className="text-[11.5px] font-semibold text-ink/65">
+        {meta.label.replace(" confidence", "")}
+      </span>
       {reason ? <span className="sr-only">{reason}</span> : null}
     </div>
   );

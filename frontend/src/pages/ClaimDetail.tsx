@@ -126,7 +126,7 @@ export function ClaimDetail() {
           <Card className="bg-lavender-soft p-5">
             <div className="flex items-center justify-between">
               <SectionLabel>Statement as written</SectionLabel>
-              <span className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">
                 page {detail.page_number ?? "—"}
               </span>
             </div>
@@ -147,7 +147,7 @@ export function ClaimDetail() {
           <Card className="overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ink/10 px-5 py-3">
               <SectionLabel>Automated verdict</SectionLabel>
-              <span className="text-[11px] text-slate">
+              <span className="text-[11px] font-semibold text-slate">
                 {BASIS_LABEL[verification?.evidence_basis ?? "none"] ?? verification?.evidence_basis} ·{" "}
                 {verification?.reviewed_status ?? "pending"}
               </span>
@@ -161,7 +161,7 @@ export function ClaimDetail() {
                   </div>
                   <p className="mt-3 text-[13.5px] leading-relaxed text-ink/85">{verification.explanation}</p>
                   {verification.confidence_reason ? (
-                    <p className="mt-2 text-[11.5px] leading-relaxed text-slate">
+                    <p className="mt-2 text-[11.5px] font-semibold leading-relaxed text-slate">
                       Confidence: {verification.confidence_reason}
                     </p>
                   ) : null}
@@ -173,28 +173,28 @@ export function ClaimDetail() {
                       </summary>
                       <div className="mt-3 grid gap-4 sm:grid-cols-2">
                         <div>
-                          <p className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">Supports</p>
+                          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">Supports</p>
                           <ul className="mt-1.5 space-y-1.5">
                             {verification.key_supporting_facts.map((fact) => (
-                              <li key={fact} className="flex gap-2 text-[12px] leading-relaxed text-ink/75">
+                              <li key={fact} className="flex gap-2 text-[12px] font-semibold leading-relaxed text-ink/75">
                                 <Check className="mt-0.5 h-3 w-3 shrink-0 text-emerald-600" /> {fact}
                               </li>
                             ))}
                             {verification.key_supporting_facts.length === 0 ? (
-                              <li className="text-[12px] text-slate">None recorded.</li>
+                              <li className="text-[12px] font-semibold text-slate">None recorded.</li>
                             ) : null}
                           </ul>
                         </div>
                         <div>
-                          <p className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">Limits</p>
+                          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">Limits</p>
                           <ul className="mt-1.5 space-y-1.5">
                             {verification.limitations.map((item) => (
-                              <li key={item} className="flex gap-2 text-[12px] leading-relaxed text-ink/75">
+                              <li key={item} className="flex gap-2 text-[12px] font-semibold leading-relaxed text-ink/75">
                                 <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-amber-500" /> {item}
                               </li>
                             ))}
                             {verification.limitations.length === 0 ? (
-                              <li className="text-[12px] text-slate">None recorded.</li>
+                              <li className="text-[12px] font-semibold text-slate">None recorded.</li>
                             ) : null}
                           </ul>
                         </div>
@@ -203,7 +203,7 @@ export function ClaimDetail() {
                   ) : null}
 
                   {verification.needs_human_review ? (
-                    <div className="mt-3 flex flex-wrap items-center gap-1.5 border-2 border-amber-300 bg-amber-50 px-3 py-2 text-[11.5px] text-amber-800">
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5 border-2 border-amber-300 bg-amber-50 px-3 py-2 text-[11.5px] font-semibold text-amber-800">
                       <AlertTriangle className="h-3.5 w-3.5" />
                       Needs human review
                       <span className="text-amber-700/80">
@@ -221,7 +221,7 @@ export function ClaimDetail() {
           <div>
             <div className="flex items-center justify-between">
               <h2 className="display text-lg">Evidence from the source</h2>
-              <span className="text-[11px] text-slate">{detail.evidence.length} passages</span>
+              <span className="text-[11px] font-semibold text-slate">{detail.evidence.length} passages</span>
             </div>
             {detail.evidence.length === 0 ? (
               <div className="mt-2 flex items-start gap-2 border-2 border-dashed border-ink/20 bg-white/70 p-4 text-[12.5px] text-slate">
@@ -233,7 +233,7 @@ export function ClaimDetail() {
                 {detail.evidence.map((evidence, index) => (
                   <Card key={evidence.id} className="p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">
+                      <span className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">
                         <Quote className="h-3 w-3" />
                         {String(index + 1).padStart(2, "0")}
                         {evidence.source_section ? ` · ${evidence.source_section}` : ""}
@@ -278,12 +278,12 @@ export function ClaimDetail() {
                 <p className="text-[13px] font-semibold leading-snug">
                   {reference.matched_title ?? reference.title ?? "Title unavailable"}
                 </p>
-                <p className="text-[11.5px] leading-relaxed text-slate">
+                <p className="text-[11.5px] font-semibold leading-relaxed text-slate">
                   {reference.matched_authors.slice(0, 3).join(", ") || reference.authors.slice(0, 3).join(", ") || "Authors unavailable"}
                   {reference.matched_year ?? reference.year ? ` · ${reference.matched_year ?? reference.year}` : ""}
                 </p>
                 {reference.publication_source ? (
-                  <p className="text-[11.5px] italic text-slate">{reference.publication_source}</p>
+                  <p className="text-[11.5px] font-semibold italic text-slate">{reference.publication_source}</p>
                 ) : null}
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   <Badge className="bg-paper">{reference.matching_status}</Badge>
@@ -300,7 +300,7 @@ export function ClaimDetail() {
                     <ArrowUpRight className="h-3.5 w-3.5 text-violet" />
                   </a>
                 ) : (
-                  <p className="mt-1 border border-dashed border-ink/20 px-2.5 py-2 text-[11px] text-slate">
+                  <p className="mt-1 border border-dashed border-ink/20 px-2.5 py-2 text-[11px] font-semibold text-slate">
                     No public source link confirmed.
                   </p>
                 )}
@@ -315,7 +315,7 @@ export function ClaimDetail() {
                 ) : null}
               </div>
             ) : (
-              <p className="mt-2 text-[12px] leading-relaxed text-slate">
+              <p className="mt-2 text-[12px] font-semibold leading-relaxed text-slate">
                 No reference matched this claim, so there is no paper to inspect.
               </p>
             )}
@@ -363,16 +363,16 @@ export function ClaimDetail() {
                 type="button"
                 onClick={() => submitReview("note")}
                 disabled={saving || !note.trim()}
-                className="w-full text-[11px] text-slate hover:text-ink disabled:opacity-40"
+                className="w-full text-[11px] font-semibold text-slate hover:text-ink disabled:opacity-40"
               >
                 Save note only
               </button>
-              {saved ? <p className="rounded-md bg-emerald-50 px-2 py-1 text-[11px] text-emerald-800">{saved}</p> : null}
-              {error ? <p className="rounded-md bg-red-50 px-2 py-1 text-[11px] text-danger">{error}</p> : null}
+              {saved ? <p className="rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800">{saved}</p> : null}
+              {error ? <p className="rounded-md bg-red-50 px-2 py-1 text-[11px] font-semibold text-danger">{error}</p> : null}
             </div>
           </Card>
 
-          <p className="px-1 text-[10.5px] leading-relaxed text-slate">
+          <p className="px-1 text-[12px] font-semibold leading-relaxed text-slate">
             Confidence reflects evidence strength, not a probability that the claim is true.
           </p>
         </aside>

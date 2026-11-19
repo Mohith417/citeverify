@@ -91,7 +91,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
   return (
     <details className="group border-2 border-ink bg-white transition-shadow hover:shadow-block-sm open:shadow-block-sm">
       <summary className="flex cursor-pointer list-none items-start gap-3 p-4 [&::-webkit-details-marker]:hidden">
-        <span className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md bg-lavender-soft px-1 font-mono text-[10.5px]">
+        <span className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md bg-lavender-soft px-1 font-mono text-[12px] font-semibold">
           {reference.ref_label || "—"}
         </span>
         <div className="min-w-0 flex-1">
@@ -108,7 +108,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
       </summary>
 
       <div className="space-y-4 border-t-2 border-ink/10 p-4">
-        <p className="break-words text-[12px] leading-relaxed text-slate">{reference.reference_text}</p>
+        <p className="break-words text-[12px] font-semibold leading-relaxed text-slate">{reference.reference_text}</p>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="min-w-0">
@@ -116,12 +116,12 @@ function ReferenceRow({ reference }: { reference: Reference }) {
             {reference.matched_title ? (
               <div className="mt-1.5 space-y-1">
                 <p className="text-[12.5px] font-semibold leading-snug">{reference.matched_title}</p>
-                <p className="text-[11.5px] text-slate">
+                <p className="text-[11.5px] font-semibold text-slate">
                   {reference.matched_authors.slice(0, 4).join(", ") || "authors unavailable"}
                   {reference.matched_year ? ` · ${reference.matched_year}` : ""}
                 </p>
                 {reference.publication_source ? (
-                  <p className="text-[11.5px] italic text-slate">{reference.publication_source}</p>
+                  <p className="text-[11.5px] font-semibold italic text-slate">{reference.publication_source}</p>
                 ) : null}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   {reference.matched_doi ? (
@@ -129,7 +129,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
                       href={`https://doi.org/${reference.matched_doi}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 rounded-md bg-paper px-2 py-1 font-mono text-[10px] text-violet hover:bg-lavender-soft"
+                      className="inline-flex items-center gap-1 rounded-md bg-paper px-2 py-1 font-mono text-[11.5px] font-semibold text-violet hover:bg-lavender-soft"
                     >
                       doi:{reference.matched_doi} <ArrowUpRight className="h-3 w-3" />
                     </a>
@@ -147,7 +147,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
                 </div>
               </div>
             ) : (
-              <p className="mt-1.5 text-[12px] leading-relaxed text-slate">
+              <p className="mt-1.5 text-[12px] font-semibold leading-relaxed text-slate">
                 No publication confirmed — kept for human review rather than guessed.
               </p>
             )}
@@ -155,7 +155,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
 
           <div className="min-w-0">
             <SectionLabel>Parsed metadata</SectionLabel>
-            <dl className="mt-1.5 space-y-1 text-[11.5px]">
+            <dl className="mt-1.5 space-y-1 text-[11.5px] font-semibold">
               {[
                 ["Title", reference.title ?? "—"],
                 ["Year", reference.year?.toString() ?? "—"],
@@ -183,7 +183,7 @@ function ReferenceRow({ reference }: { reference: Reference }) {
         {reference.abstract ? (
           <details className="rounded-lg bg-paper/70 p-3">
             <summary className="cursor-pointer text-[11px] font-medium text-slate">Abstract retrieved</summary>
-            <p className="mt-2 max-h-40 overflow-y-auto text-[11.5px] leading-relaxed text-ink/70">
+            <p className="mt-2 max-h-40 overflow-y-auto text-[11.5px] font-semibold leading-relaxed text-ink/70">
               {reference.abstract}
             </p>
           </details>
@@ -199,13 +199,13 @@ function ReferenceRow({ reference }: { reference: Reference }) {
                 const record = candidate as Record<string, unknown>;
                 const doi = record.doi ? String(record.doi) : "";
                 return (
-                  <li key={`${record.title}-${index}`} className="flex items-center justify-between gap-2 text-[11.5px]">
+                  <li key={`${record.title}-${index}`} className="flex items-center justify-between gap-2 text-[11.5px] font-semibold">
                     <span className="truncate">
                       {String(record.title ?? "Untitled")}
                       {record.year ? ` · ${record.year}` : ""}
                     </span>
                     {doi ? (
-                      <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer" className="font-mono text-[10px] text-violet hover:underline">
+                      <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer" className="font-mono text-[11.5px] font-semibold text-violet hover:underline">
                         {doi}
                       </a>
                     ) : null}

@@ -70,7 +70,7 @@ export function Layout() {
         <div className="pointer-events-none fixed inset-0 z-50 grid place-items-center bg-ink/75 p-6 text-paper">
           <div className="border-2 border-paper px-10 py-8 text-center">
             <p className="display text-3xl sm:text-4xl">Drop to verify</p>
-            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-paper/60">
+            <p className="mt-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-paper/60">
               one text-based PDF · max 20 MB
             </p>
           </div>
@@ -81,7 +81,7 @@ export function Layout() {
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0 items-center gap-8">
               {TICKER.map((item) => (
-                <span key={item} className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em]">
+                <span key={item} className="flex items-center gap-3 font-mono text-[11.5px] font-semibold uppercase tracking-[0.2em]">
                   <span className="h-1 w-1 rotate-45 bg-coral" />
                   {item}
                 </span>
@@ -104,7 +104,7 @@ export function Layout() {
                     "font-mono text-[15px] uppercase tracking-[0.1em] transition-colors duration-200",
                     isActive || location.pathname.startsWith(item.to)
                       ? "link-line font-semibold text-ink after:scale-x-100"
-                      : "link-line text-ink/70 hover:text-ink",
+                      : "link-line text-ink/80 hover:text-ink",
                   )
                 }
               >
@@ -112,7 +112,7 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
-          <span className="hidden shrink-0 items-center gap-2 border-2 border-ink/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-ink/55 lg:inline-flex">
+          <span className="hidden shrink-0 items-center gap-2 border-2 border-ink/15 px-2.5 py-1 font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] text-ink/55 lg:inline-flex">
             <span className="h-1.5 w-1.5 rounded-full bg-mint ring-1 ring-ink/40" />
             Drag a PDF anywhere
           </span>
@@ -127,12 +127,12 @@ export function Layout() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <Logo light />
-            <p className="max-w-xs text-[12px] leading-relaxed text-paper/55">
+            <p className="max-w-xs text-[12px] font-semibold leading-relaxed text-paper/55">
               Checks whether cited research actually supports the claim — and shows the passage that
               decides it.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-paper/55">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/55">
             {NAV.map((item) => (
               <Link
                 key={item.to}
@@ -146,7 +146,7 @@ export function Layout() {
             <span>Crossref · OpenAlex · Europe PMC</span>
           </div>
         </div>
-        <div className="border-t border-paper/15 px-4 py-3 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-paper/40">
+        <div className="border-t border-paper/15 px-4 py-3 text-center font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-paper/40">
           Automated verdicts stay open to human review
         </div>
       </footer>

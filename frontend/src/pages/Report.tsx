@@ -90,7 +90,7 @@ export function Report() {
               "Confidence indicators, limitations and review flags",
             ].map((item, index) => (
               <li key={item} className="flex gap-3">
-                <span className="font-mono text-[10px] text-slate">{String(index + 1).padStart(2, "0")}</span>
+                <span className="font-mono text-[11.5px] font-semibold text-slate">{String(index + 1).padStart(2, "0")}</span>
                 {item}
               </li>
             ))}
@@ -102,8 +102,8 @@ export function Report() {
               {VERDICT_ORDER.map((verdict) => (
                 <div key={verdict} className="flex items-center gap-2 border border-line px-2 py-1">
                   <span className={`h-2 w-2 ${verdictMeta(verdict).dot}`} />
-                  <span className="text-[11px]">{verdictMeta(verdict).label}</span>
-                  <span className="font-mono text-[11px] text-slate">{counts[verdict] ?? 0}</span>
+                  <span className="text-[11px] font-semibold">{verdictMeta(verdict).label}</span>
+                  <span className="font-mono text-[11px] font-semibold text-slate">{counts[verdict] ?? 0}</span>
                 </div>
               ))}
             </div>
@@ -118,12 +118,12 @@ export function Report() {
                   to={`/documents/${id}/claims/${claim.claim_id}`}
                   className="flex items-center justify-between gap-3 py-2 hover:bg-paper"
                 >
-                  <span className="line-clamp-1 text-[12px] text-ink/80">{claim.claim_text}</span>
+                  <span className="line-clamp-1 text-[12px] font-semibold text-ink/80">{claim.claim_text}</span>
                   <VerdictBadge verdict={claim.verdict} size="sm" />
                 </Link>
               ))}
               {claims.length > 8 ? (
-                <p className="pt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
+                <p className="pt-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.12em] text-slate">
                   + {claims.length - 8} more in the PDF
                 </p>
               ) : null}
@@ -137,7 +137,7 @@ export function Report() {
               <FileText className="h-3.5 w-3.5" /> Document
             </SectionLabel>
             <p className="mt-2 break-words text-sm font-semibold">{data.document.filename}</p>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.1em] text-slate">
+            <p className="mt-1 font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] text-slate">
               {data.document.page_count} pages · {formatDate(data.document.uploaded_at)}
             </p>
             <a href={api.reportUrl(id)} target="_blank" rel="noreferrer" className="mt-4 block">
@@ -149,7 +149,7 @@ export function Report() {
               href={api.reportUrl(id)}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 flex items-center justify-center gap-1 text-[11px] text-slate hover:text-ink"
+              className="mt-2 flex items-center justify-center gap-1 text-[11px] font-semibold text-slate hover:text-ink"
             >
               opens in a new tab <ArrowUpRight className="h-3 w-3" />
             </a>
@@ -157,7 +157,7 @@ export function Report() {
 
           <Card className="bg-lavender-soft p-5">
             <ShieldCheck className="h-5 w-5" />
-            <p className="mt-2 text-[12px] leading-relaxed text-ink/80">
+            <p className="mt-2 text-[12px] font-semibold leading-relaxed text-ink/80">
               The report states the evidence basis for every claim. Abstract-only findings are labelled, and claims
               without accessible evidence are marked for review — never presented as verified.
             </p>

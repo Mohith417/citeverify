@@ -23,7 +23,10 @@
     @apply font-display uppercase leading-[0.92] tracking-[-0.02em];
   }
   .label-mono {
-    @apply font-mono text-[11px] uppercase tracking-[0.16em] text-slate;
+    @apply font-mono text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink/70;
+  }
+  .micro {
+    @apply font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-ink/65;
   }
   .block-card {
     @apply border-2 border-ink bg-white;

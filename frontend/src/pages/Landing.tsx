@@ -144,7 +144,7 @@ export function Landing() {
                   <dt className="font-display text-xl leading-none transition-transform duration-300 ease-smooth group-hover:-translate-y-[1px] group-hover:text-violet">
                     {stat.value}
                   </dt>
-                  <dd className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate">
+                  <dd className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.14em] text-slate">
                     {stat.label}
                   </dd>
                 </div>
@@ -160,7 +160,7 @@ export function Landing() {
             />
 
             <div className="group absolute right-0 top-0 w-[86%] rotate-[2deg] border-2 border-ink bg-white p-5 shadow-block transition-all duration-300 ease-smooth hover:-translate-y-1 hover:rotate-0 hover:shadow-block-sm">
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
+              <div className="flex items-center justify-between font-mono text-[11.5px] font-semibold uppercase tracking-[0.12em] text-slate">
                 <span>Claim 04</span>
                 <span className="border border-ink/20 px-1.5 py-0.5">p. 3</span>
               </div>
@@ -169,11 +169,11 @@ export function Landing() {
               </p>
               <div className="mt-4 flex items-center justify-between">
                 <VerdictBadge verdict="partially_supported" size="sm" />
-                <span className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">
                   confidence · med
                 </span>
               </div>
-              <p className="mt-3 border-t-2 border-line pt-3 text-[11.5px] leading-relaxed text-slate">
+              <p className="mt-3 border-t-2 border-line pt-3 text-[11.5px] font-semibold leading-relaxed text-slate">
                 The paper reports improvement in a small pilot, but no 30% increase.
               </p>
             </div>
@@ -184,7 +184,7 @@ export function Landing() {
                 “Participants in the intervention arm improved, although the study was a small
                 pilot.”
               </p>
-              <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.14em] text-paper/60">
+              <p className="mt-3 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-paper/60">
                 verbatim · results section
               </p>
             </div>
@@ -207,7 +207,7 @@ export function Landing() {
       >
         <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
           <h2 className="display text-2xl sm:text-3xl">How a check runs</h2>
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate">
+          <span className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-slate">
             Pick a step · watch it happen
           </span>
         </div>
@@ -240,7 +240,7 @@ export function Landing() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline gap-3">
-                      <span className="font-mono text-[10px] tracking-[0.18em] text-slate">{step.n}</span>
+                      <span className="font-mono text-[11.5px] font-semibold tracking-[0.18em] text-slate">{step.n}</span>
                       <span className="display text-xl leading-tight sm:text-2xl">{step.title}</span>
                     </span>
                     <span
@@ -271,7 +271,7 @@ export function Landing() {
             <div key={stage} className="relative animate-rise space-y-4">
               {stage === 0 ? (
                 <>
-                  <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-slate">
+                  <div className="flex items-center justify-between font-mono text-[11.5px] font-semibold uppercase tracking-[0.14em] text-slate">
                     <span>reading · page 3 of 15</span>
                     <span className="border border-ink/20 px-1.5 py-0.5">PDF</span>
                   </div>
@@ -283,13 +283,13 @@ export function Landing() {
                     {["claim · p.1", "marker [3]", "marker [12]", "bibliography"].map((chip) => (
                       <span
                         key={chip}
-                        className="border border-ink/20 bg-paper px-2 py-1 font-mono text-[9.5px] uppercase tracking-[0.1em] text-ink/70"
+                        className="border border-ink/20 bg-paper px-2 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/70"
                       >
                         {chip}
                       </span>
                     ))}
                   </div>
-                  <p className="pt-1 text-[12px] leading-relaxed text-slate">
+                  <p className="pt-1 text-[12px] font-semibold leading-relaxed text-slate">
                     16 claims and 40 references found — nothing is invented, only read.
                   </p>
                 </>
@@ -298,10 +298,10 @@ export function Landing() {
               {stage === 1 ? (
                 <>
                   <div className="border border-ink/15 bg-paper p-3">
-                    <p className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-slate">
+                    <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-slate">
                       reference [12]
                     </p>
-                    <p className="mt-1 text-[12px] leading-snug text-ink/70">
+                    <p className="mt-1 text-[12px] font-semibold leading-snug text-ink/70">
                       Vaswani et al. Attention is all you need. NeurIPS, 2017.
                     </p>
                   </div>
@@ -309,15 +309,15 @@ export function Landing() {
                     <ArrowRight className="h-4 w-4 rotate-90" />
                   </div>
                   <div className="border-2 border-ink bg-white p-3 shadow-block-sm">
-                    <p className="flex items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.12em] text-emerald-800">
+                    <p className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-800">
                       <Check className="h-3.5 w-3.5" /> matched · arXiv + Crossref
                     </p>
                     <p className="mt-1.5 text-[13px] font-semibold leading-snug">
                       Attention Is All You Need
                     </p>
-                    <p className="mt-1 font-mono text-[10px] text-slate">2017 · open-access full text</p>
+                    <p className="mt-1 font-mono text-[11.5px] font-semibold text-slate">2017 · open-access full text</p>
                   </div>
-                  <p className="text-[12px] leading-relaxed text-slate">
+                  <p className="text-[12px] font-semibold leading-relaxed text-slate">
                     Six providers are queried; a title that does not match is never accepted.
                   </p>
                 </>
@@ -332,16 +332,16 @@ export function Landing() {
                     <VerdictBadge verdict="supported" size="sm" />
                   </div>
                   <div className="border-l-2 border-violet bg-lavender-soft p-3">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-violet">
+                    <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-violet">
                       source · §3.2
                     </p>
-                    <p className="mt-1 flex gap-2 text-[12px] leading-relaxed text-ink/75">
+                    <p className="mt-1 flex gap-2 text-[12px] font-semibold leading-relaxed text-ink/75">
                       <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-coral" />
                       “Attention allows the model to jointly attend to information from different
                       representation subspaces…”
                     </p>
                   </div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate">
+                  <p className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.12em] text-slate">
                     confidence · high · still open to human review
                   </p>
                 </>
@@ -355,7 +355,7 @@ export function Landing() {
       <section className="mx-auto w-full max-w-6xl px-4 pb-12 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
           <h2 className="display text-2xl sm:text-3xl">Six honest verdicts</h2>
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate">
+          <p className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-slate">
             “unsupported” ≠ “false”
           </p>
         </div>
@@ -378,14 +378,14 @@ export function Landing() {
               >
                 <span
                   className={cn(
-                    "absolute right-4 top-4 font-mono text-[10px] transition-all duration-300 ease-smooth",
+                    "absolute right-4 top-4 font-mono text-[11.5px] font-semibold transition-all duration-300 ease-smooth",
                     active ? "text-violet" : "text-ink/25 group-hover:-translate-y-0.5 group-hover:text-violet/60",
                   )}
                 >
                   0{index + 1}
                 </span>
                 <VerdictBadge verdict={item} />
-                <p className="mt-3 max-w-[26ch] text-[11.5px] leading-relaxed text-ink/60 transition-colors duration-200 group-hover:text-ink/80">
+                <p className="mt-3 max-w-[26ch] text-[11.5px] font-semibold leading-relaxed text-ink/60 transition-colors duration-200 group-hover:text-ink/80">
                   {meta.description}
                 </p>
                 <span
@@ -404,23 +404,23 @@ export function Landing() {
           className="mt-3 grid animate-rise gap-4 border-2 border-ink bg-white p-5 md:grid-cols-[1.15fr_0.85fr] md:gap-8"
         >
           <div>
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-slate">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-slate">
               example claim
             </p>
             <p className="mt-2 text-[14px] font-semibold leading-snug">{example.claim}</p>
             <div className="mt-3 flex items-center gap-2">
               <VerdictBadge verdict={verdict} size="sm" />
-              <span className="font-mono text-[9.5px] uppercase tracking-[0.1em] text-slate">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-slate">
                 verdict
               </span>
             </div>
           </div>
           <div className="border-t-2 border-line pt-3 md:border-l-2 md:border-t-0 md:pl-6 md:pt-0">
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-slate">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-slate">
               why it lands here
             </p>
             <p className="mt-2 text-[12.5px] leading-relaxed text-ink/70">{example.reason}</p>
-            <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.12em] text-slate">
+            <p className="mt-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-slate">
               every verdict keeps its evidence quote
             </p>
           </div>
@@ -449,7 +449,7 @@ export function Landing() {
                 <br />
                 <span className="text-lavender">Not just the reference.</span>
               </h2>
-              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-paper/45">
+              <p className="mt-3 font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-paper/45">
                 Free research APIs · no paywall bypassing
               </p>
             </div>
@@ -459,7 +459,7 @@ export function Landing() {
                   Read the full method <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
+              <span className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.12em] text-paper/45">
                 or drag a PDF anywhere on this page
               </span>
             </div>
