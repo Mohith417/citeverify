@@ -272,9 +272,6 @@ function SourceStatus() {
               {health?.ai_configured ? health.ai_provider : "not configured"}
             </span>
           </div>
-          <p className="mt-2 text-[11px] leading-snug text-ink/50">
-            Free APIs only. A run still proceeds if one source is unavailable.
-          </p>
         </div>
       ) : null}
     </div>
