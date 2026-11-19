@@ -18,3 +18,4 @@ backend/storage/reports/
 frontend/screenshot-*.png
 backend/storage/last_doc_id
 backend/storage/res.json
+vite.log
