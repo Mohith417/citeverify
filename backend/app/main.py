@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import models  # noqa: F401  (registers tables)
+from .api import analysis, upload
 from .config import settings
 from .database import Base, engine
 
@@ -14,13 +15,15 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="CiteVerify API", version="0.2.0", lifespan=lifespan)
+app = FastAPI(title="CiteVerify API", version="0.3.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(upload.router)
+app.include_router(analysis.router)
 
 
 @app.get("/api/health")
