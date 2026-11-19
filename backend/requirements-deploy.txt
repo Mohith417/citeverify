@@ -1,0 +1,26 @@
+# Deployment requirements for small hosts (512 MB-1 GB RAM).
+#
+# Same as requirements.txt minus sentence-transformers and faiss-cpu, which pull
+# in PyTorch (~800 MB) and blow past a free-tier instance during install.
+# Both imports are lazy in services/evidence_retrieval.py, so the pipeline falls
+# back to the deterministic lexical ranking without them: verdicts still get
+# evidence, only the ranking of retrieved paragraphs changes.
+#
+# Use this file on Render/Fly/Railway free tiers; use requirements.txt on a box
+# with enough memory if you want the embedding reranker.
+
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+pydantic-settings>=2.2
+sqlalchemy>=2.0
+python-multipart>=0.0.9
+httpx>=0.27
+pytest>=8.0
+pypdf>=4.0
+reportlab>=4.0
+rapidfuzz>=3.0
+google-genai>=1.0.0
+python-dotenv>=1.0.0
+lxml>=5.0.0
+feedparser>=6.0.0

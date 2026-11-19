@@ -30,6 +30,12 @@ class Settings(BaseSettings):
 
     # Services -------------------------------------------------------------
     grobid_url: str = "http://localhost:8070"
+    # Comma-separated browser origins allowed to call the API. Set this to the
+    # deployed frontend origin in production (e.g. https://citeverify.vercel.app).
+    cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:4173,http://127.0.0.1:4173"
+    )
     database_url: str = "sqlite:///./storage/citeverify.db"
     max_upload_mb: int = 20
 

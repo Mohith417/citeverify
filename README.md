@@ -75,8 +75,57 @@ and reference parser is used instead — the pipeline never blocks on it.
 | `SEMANTIC_SCHOLAR_API_KEY` | Optional; raises the Semantic Scholar rate limit |
 | `OPENALEX_API_KEY` | Optional; avoids anonymous search throttling |
 | `MAX_UPLOAD_MB`, `MAX_CLAIMS`, `MAX_VERIFY_CLAIMS` | Pipeline limits |
+| `CORS_ORIGINS` | Comma-separated browser origins allowed to call the API; add the deployed frontend URL |
 
 Keys stay server-side; the browser only talks to the FastAPI app.
+
+---
+
+## Deploy
+
+Two pieces: the FastAPI app (a Python process, needs a real container/instance) and the Vite build
+(static files). The frontend talks to the API directly, so the API must allow the frontend's origin
+via `CORS_ORIGINS`.
+
+### Backend — Render / Fly.io / Railway (or any Docker host)
+
+Settings that matter:
+
+| Setting | Value |
+|---|---|
+| Root directory | `backend` |
+| Build command | `pip install -r requirements-deploy.txt` |
+| Start command | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+| Disk | mount at `/opt/render/project/src/backend/storage` (SQLite + uploads survive restarts) |
+
+`requirements-deploy.txt` is `requirements.txt` without `sentence-transformers`/`faiss-cpu`. Those
+pull PyTorch (~800 MB) and exceed a free instance's memory during install; both imports are lazy, so
+the pipeline falls back to lexical paragraph ranking and verdicts are unaffected.
+
+Environment variables: `GEMINI_API_KEY` (or `AI_PROVIDER=groq`, `AI_BASE_URL`,
+`AI_API_KEY`, `AI_MODEL`), `CONTACT_EMAIL`, `UNPAYWALL_EMAIL`, `CORS_ORIGINS=https://<your-frontend>`.
+Skip `GROBID_URL` — GROBID is optional and the parser degrades to regex extraction.
+
+Verify `https://<backend>/api/health` returns `ai_configured: true`.
+
+### Frontend — Vercel / Netlify / Cloudflare Pages
+
+| Setting | Value |
+|---|---|
+| Root directory | `frontend` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+| Env var | `VITE_API_URL=https://<backend>` (build-time; no trailing slash) |
+
+`VITE_API_URL` is baked into the bundle at build time, so set it before the first build and rebuild
+after changing it. Client-side routes (`/dashboard`, `/library`, …) need an SPA fallback to
+`index.html`; Vercel's Vite preset does this automatically, on Netlify add
+`/* /index.html 200` to `netlify.toml`.
+
+### Single box instead
+
+Both services fit on one small VPS: build `frontend/dist`, serve it with nginx and proxy `/api` to
+uvicorn on `127.0.0.1:8000` — the same shape as the Vite dev proxy, so no CORS entry is needed.
 
 ---
 
