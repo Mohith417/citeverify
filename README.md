@@ -8,6 +8,15 @@ supports each statement.
 A citation existing is not the same as a citation proving the claim. Every verdict ships with the
 source passage, a confidence indicator, the publication trace and a human-review flag.
 
+
+## Live Demo
+
+- **App:** https://citeverify-puce.vercel.app
+- **API health check:** https://citeverify-8916.onrender.com/api/health
+- **Source:** https://github.com/Mohith417/citeverify
+
+> Hosted entirely on free tiers (Vercel for the frontend, Render for the backend). The free backend sleeps when idle, so the first request can take 30-60 seconds to wake up. Uploaded documents and history are not kept after the backend restarts.
+
 ---
 
 ## Stack
