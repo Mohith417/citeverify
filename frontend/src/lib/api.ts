@@ -66,5 +66,5 @@ export const api = {
   deleteDocument: (id: string) =>
     client.delete(`/api/documents/${id}`).then((r) => r.data),
 
-  reportUrl: (id: string) => `/api/documents/${id}/report`,
+  reportUrl: (id: string) => `${import.meta.env.VITE_API_URL || ""}/api/documents/${id}/report`,
 };
