@@ -37,6 +37,41 @@ Upload an academic PDF. CiteVerify finds the claims that need evidence, locates 
 
 ---
 
+## Screenshots
+
+Explore the CiteVerify interface and its core features.
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshots/01-landing.png" alt="CiteVerify Landing Page" width="100%">
+      <p align="center"><b>01. Landing Page</b></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshots/02-upload.png" alt="Document Upload" width="100%">
+      <p align="center"><b>02. Document Verification</b></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshots/03-method.png" alt="CiteVerify Methodology" width="100%">
+      <p align="center"><b>03. Verification Methodology</b></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshots/04-history.png" alt="Document History" width="100%">
+      <p align="center"><b>04. Analysis History</b></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="docs/screenshots/05-results.png" alt="Verification Results Dashboard" width="85%">
+      <p align="center"><b>05. Results Dashboard</b></p>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Why CiteVerify?
 
 Papers cite other papers all the time, but readers rarely check whether the cited work actually says what is claimed. CiteVerify automates the first pass of that check and keeps a human in the loop.
